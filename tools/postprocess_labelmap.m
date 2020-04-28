@@ -22,6 +22,7 @@ if ~exist([outprefix '/labelmap-postProcess.nii.gz'],'file')
 % ensures output labels are all connected (keeps only largest island), and
 % ensures the result is above a minimum size (in voxels).
 labelmap = load_untouch_nii(lblname);
+sz = size(labelmap.img);
 
 conncom = bwconncomp(labelmap.img>0);
 if length(conncom.PixelIdxList)>1
@@ -46,15 +47,18 @@ end
 % make cyst part of dark band
 midProcess = labelmap.img;
 midProcess(midProcess==7) = 2;
-sz = size(labelmap.img);
+
 [x,y,z] = ind2sub(size(midProcess),find(midProcess==1));
 crop = [min(x)-cropbuffer, max(x)+cropbuffer;...
         min(y)-cropbuffer, max(y)+cropbuffer;...
         min(z)-cropbuffer, max(z)+cropbuffer]';
-crop(crop<1) = 1;
-if crop(2,1)>sz(1); crop(2,1) = sz(1); end
+% ensure we don't exceed the image
+crop(crop<1)=1;
+if crop(1,2)>sz(1); crop(1,2) = sz(1); end
 if crop(2,2)>sz(2); crop(2,2) = sz(2); end
-if crop(2,3)>sz(3); crop(2,3) = sz(3); end
+if crop(3,2)>sz(3); crop(3,2) = sz(3); end
+
+
 midProcess = midProcess(crop(1):crop(2),crop(3):crop(4),crop(5):crop(6));
 
 % remove headers (since atlas is headless) 
@@ -113,7 +117,7 @@ GM = find(lbl1.img==1);
 SRLM = find(lbl2.img==2);
 check1 = setdiff(GM,bound);
 check2 = setdiff(SRLM,bound);
-if isempty(GM) || isempty(SRLM)% || ~isempty(check1) || ~isempty(check2)
+if isempty(GM) || isempty(SRLM) || ~isempty(check1) || ~isempty(check2)
     error('Error: one or both registrations to UPenn atlas failed');
 end
 
@@ -132,10 +136,55 @@ warpBoth_img.img = warpSRLM_img.img.*averaging_weights + ...
     warpGM_img.img.*(-averaging_weights +1);
 save_untouch_nii(warpBoth_img,warpBoth);
 
+
+
+
+
+% %% EXPERIMENTAL
+% if refineWithImg
+%     system(['antsApplyTransforms -d 3 --interpolation Linear '...
+%         '-i atlases/UPenn_ExVivo/Avg_img.nii.gz '...
+%         '-o ' tmpdir '/UPenn_warped_img.nii.gz '...
+%         '-r ' tmpdir '/labelmap-postProcess_noCyst_noHeader.nii.gz '...
+%         '-t ' warpBoth ' '...
+%         '-t ' initAff]);
+%     % mask out cysts and CSF; remove header
+%     img = load_untouch_nii([outprefix '/img.nii.gz']);
+%     se = strel('sphere',1);
+%     WMint = min(img.img(labelmap.img==2));
+%     GMint = mean(img.img(labelmap.img==1));
+%     csf = img.img>mean(img.img(labelmap.img==7)) | labelmap.img==7;
+%     csf = 1-smooth3(csf); 
+%     
+%     img.img = img.img.*csf;
+%     save_nii(make_nii(img.img,img.hdr.dime.pixdim(2:4)),...
+%         [tmpdir '/img_noCyst_noHeader.nii.gz']);    
+%     
+%     % now refine using this image
+%     system(['tools/ANTsTools/runAntsImgs_SynOnly.sh '...
+%         tmpdir '/img_noCyst_noHeader.nii.gz '...
+%         tmpdir '/UPenn_warped_img.nii.gz '... 
+%         initAff ' '... % supply affine from first registration
+%         tmpdir '/labelmap-postProcess_UPennAtlasReg-SynRefine']);
+%     warpRefine = [tmpdir '/labelmap-postProcess_UPennAtlasReg-SynRefine/ants_1Warp.nii.gz'];
+%     
+%     %% apply transforms...
+%     system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
+%         '-i atlases/UPenn_ExVivo/Avg_lbl_JDedit_withDG_withDummy.nii.gz '...
+%         '-o ' tmpdir '/UPenn_warped_lbl_refined.nii.gz '...
+%         '-r ' tmpdir '/labelmap-postProcess_noCyst_noHeader.nii.gz '...
+%         '-t ' warpRefine ' '...
+%         '-t ' warpBoth ' '...
+%         '-t ' initAff]);
+% else
+
+    
+    
+
 %% apply transforms
 
 % get header to use for all outputs
-origheader = labelmap;
+origheader = load_untouch_nii([outprefix '/img.nii.gz']);
 origheader.img = zeros(size(origheader.img));
 
 system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
@@ -150,11 +199,6 @@ origheader.img(crop(1):crop(2),crop(3):crop(4),crop(5):crop(6)) = i.img; % un-cr
 origheader.img(labelmap.img==7) = 7; % add cyst labels back in
 save_untouch_nii(origheader,[outprefix '/labelmap-postProcess.nii.gz']);
 
-% need a header that is not integers
-origheader = load_untouch_nii([tmpdir '/../img.nii.gz']);
-origheader.img = zeros(size(labelmap.img));
-
-% now propagate Laplace coords
 system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
     '-i atlases/UPenn_ExVivo/coords-AP.nii.gz '...
     '-o ' tmpdir '/coords-AP.nii.gz '...

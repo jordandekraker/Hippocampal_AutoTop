@@ -6,14 +6,11 @@ function run_NiftyNet(img,outdir)
 % don't overwrite existing files
 if ~exist([outdir '/niftynet_lbl.nii.gz'],'file')
 
-tmpdir = [outdir '/tmp/'];
+tmpdir = [pwd '/' outdir '/tmp/'];
 mkdir(tmpdir);
 configfile = [pwd '/CNNmodels/highres3dnet_large_v0.3/config.ini'];
 fn = dir(configfile);
 configdir = fn.folder;
-if exist([configdir '/dataset_split.csv'],'file')
-    error('Please remove dataset_split.csv from CNNmodel directory');
-end
 fn = dir(img);
 outname = fn.name(1:strfind(fn.name,'.nii')-1);
 
@@ -56,13 +53,9 @@ fclose(fid);
 
 %% now run through the network
 
-t = system(['singularity exec '...
+system(['singularity exec '...
     '--nv containers/deeplearning_gpu.simg net_segment '...
     '-c ' tmpdir '/CNNinference_config.ini inference']);
-
-if t ~= 0
-    error('NiftyNet failed');
-end
 
 system(['mv ' tmpdir '/img_niftynet_out.nii.gz ' outdir '/niftynet_lbl.nii.gz']);
 end

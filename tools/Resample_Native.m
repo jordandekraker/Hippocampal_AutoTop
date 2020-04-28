@@ -9,6 +9,8 @@ aff = [hippDir '/../0GenericAffine.mat']; % this is expected to be up one direct
 origimg = [hippDir '/../original.nii.gz'];
 
 for f = 1:length(imgList)
+    % TODO: add exception for transforming .vtk back to native (i.e.
+    % flipping left image)
     img = ls([hippDir '*' imgList{f} '*.nii.gz']);
     img(end) = [];
     
@@ -29,3 +31,4 @@ for f = 1:length(imgList)
         '-r ' origimg ' '...
         '-t [' aff ',1]']); % reverse the affine
 end
+

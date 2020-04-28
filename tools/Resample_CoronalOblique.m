@@ -1,10 +1,13 @@
-function Resample_CoronalOblique(inimg,outdir,addimgs)
+function Resample_CoronalOblique(inimg,outdir,space,addimgs)
 
 % Resamples the input image to 0.3mm cropped CoronalOblique by registering
-% it to CITI atlas.
+% it to agile12 atlas.
 % INPUTS:
 % inimg: input image (T2-like)
 % outname: prefix for output
+% space (optional): default 'native' will register to CITI or else specify a
+% custom atlas directory. If 'MNI152', a fixed registration will be used to
+% crop and make inputs coronal oblique.
 % addimgs (optional): (cell array) apply the same transform to additional images
 % (NearestNeighbour interpolation by default - for labelmaps)
 % DOESN'T OVERWRITE EXISTING TRANSFORMS OR OUTPUTS
@@ -18,13 +21,23 @@ function Resample_CoronalOblique(inimg,outdir,addimgs)
 mkdir(outdir);
 system(['cp ' inimg ' ' outdir '/original.nii.gz']);
 
-% run affine registration
-aff = [outdir '/0GenericAffine.mat'];
-if ~exist(aff)
-    system(['bash tools/ANTsTools/runAntsImgs_Aff.sh '...
-        'atlases/CITI/CIT168_T2w_head_700um_coronalOblique.nii.gz '...
-        inimg ' ' outdir]);
+if ~exist('space','var') || all(space=='native')
+    space = 'native';
+    atlas = 'CITI';
+else
+    atlas = space;
 end
+% run affine registration
+
+if all(space=='MNI152')
+    aff1 = 'misc/identity_affine.txt';
+else
+    aff1 = [outdir '/0GenericAffine.mat'];
+    if ~exist('aff1','file')
+        system(['bash tools/ANTsTools/runAntsImgs_Aff.sh atlases/' atlas '/orig_T2w.nii.gz ' inimg ' ' outdir]);
+    end
+end
+aff2 = ['atlases/' atlas '/CoronalOblique_rigid.txt'];
 
 % apply to imgs
 out = [outdir '/hemi-L_img.nii.gz'];
@@ -32,20 +45,30 @@ if ~exist(out)
     system(['antsApplyTransforms -d 3 --interpolation Linear '...
         '-i ' inimg ' '...
         '-o ' out ' '...
-        '-r atlases/CITI/T2w_300umCoronalOblique_hemi-L.nii.gz '...
-        '-t ' aff]);
-
-    i = load_untouch_nii(out);
-    i.img = flip(i.img,1); % flip (only if left)
-    save_untouch_nii(i,out);
+        '-r atlases/' atlas '/img_300umCoronalOblique_hemi-L.nii.gz '...
+        '-t ' aff1 ' '...
+        '-t ' aff2]);
+    [~,z] = system(['fslstats ' out ' -s']);
+    if str2num(z)==0
+        system(['rm ' out]); % remove if failed
+    else
+        i = load_untouch_nii(out);
+        i.img = flip(i.img,1); % flip (only if left)
+        save_untouch_nii(i,out);
+    end
 end
 out = [outdir '/hemi-R_img.nii.gz'];
 if ~exist(out)
     system(['antsApplyTransforms -d 3 --interpolation Linear '...
         '-i ' inimg ' '...
         '-o ' out ' '...
-        '-r atlases/CITI/T2w_300umCoronalOblique_hemi-R.nii.gz '...
-        '-t ' aff]);
+        '-r atlases/' atlas '/img_300umCoronalOblique_hemi-R.nii.gz '...
+        '-t ' aff1 ' '...
+        '-t ' aff2]);
+    [~,z] = system(['fslstats ' out ' -s']);
+    if str2num(z)==0
+        system(['rm ' out]); % remove if failed
+    end
 end
 
 %% (optional) apply to additional images (usually masks)
@@ -63,19 +86,30 @@ if exist('addimgs','var')
             system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
                 '-i ' inlbl ' '...
                 '-o ' out ' '...
-                '-r atlases/CITI/T2w_300umCoronalOblique_hemi-L.nii.gz '...
-                '-t ' aff]);
-            i = load_untouch_nii(out);
-            i.img = flip(i.img,1); % flip (only if left)
-            save_untouch_nii(i,out);
+                '-r atlases/' atlas '/img_300umCoronalOblique_hemi-L.nii.gz '...
+                '-t ' aff1 ' '...
+                '-t ' aff2]);
+    [~,z] = system(['fslstats ' out ' -s']);
+            if str2num(z)==0
+                system(['rm ' out]); % remove if failed
+            else
+                i = load_untouch_nii(out);
+                i.img = flip(i.img,1); % flip (only if left)
+                save_untouch_nii(i,out);
+            end
         end
         out = [outdir '/hemi-R_lbl.nii.gz'];
         if ~exist(out)
             system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
                 '-i ' inlbl ' '...
                 '-o ' out ' '...
-                '-r atlases/CITI/T2w_300umCoronalOblique_hemi-R.nii.gz '...
-                '-t ' aff]);
+                '-r atlases/' atlas '/img_300umCoronalOblique_hemi-R.nii.gz '...
+                '-t ' aff1 ' '...
+                '-t ' aff2]);
+    [~,z] = system(['fslstats ' out ' -s']);
+            if str2num(z)==0
+                system(['rm ' out]);
+            end
         end
     end
 end
