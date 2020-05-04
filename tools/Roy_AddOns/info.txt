@@ -1,0 +1,5 @@
+Some info:
+- Extra code block in Resample_Native to bring vertices coords back in uncropped space, and flip L hemisphere
+- Updated vtkwrite function to allow scalars. I.e.: ... , 'scalars', 'name', scalarvector, 'scalars', 'name1', 'scalarvector1'...)
+- Function to write multiple scalars (could be improved)
+- vtksmooth to smooth on the surface (needs neighborhood info of vertices, will add this later)
