@@ -10,6 +10,8 @@ iters = 4; %TODO: test this for robustness with imperfect segmenations.
 % not strong enough (more suscpetible to topological holes).
 
 
+if ~exist([outprefix 'unfold.mat'],'file')
+
 % check if initialization for Laplace coords exists & load them
 tmpdir = [outprefix '/tmp/'];
 try
@@ -142,4 +144,4 @@ save_untouch_nii(origheader,[outprefix 'coords-IO.nii.gz']);
 clearvars -except outprefix origheader labelmap sz idxgm Laplace_AP Laplace_PD... 
     Laplace_IO sourceAP sinkAP sourcePD sinkPD sourceIO sinkIO
 save([outprefix 'unfold.mat']);
-
+end

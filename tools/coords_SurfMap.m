@@ -2,6 +2,8 @@ function coords_SurfMap(outprefix)
 
 APres = 256; PDres = 128; IOres = 4;
 
+
+if ~exist([outprefix 'surf.mat'],'file')
 %% load unfolded coords
 
 load([outprefix 'unfold.mat']);
@@ -145,3 +147,4 @@ clearvars x y z u v w t i_L j_L k_L  i ii extrap interp
 clearvars -except outprefix APres PDres IOres Vxyz Vuvw Vmid Vrec F...
     idxgm img lbl sz GI streamlengths qMap
 save([outprefix 'surf.mat']);
+end
