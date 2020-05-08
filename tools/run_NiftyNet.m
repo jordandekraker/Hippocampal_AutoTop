@@ -8,7 +8,7 @@ if ~exist([outdir '/niftynet_lbl.nii.gz'],'file')
 
 tmpdir = [pwd '/' outdir '/tmp/'];
 mkdir(tmpdir);
-configfile = [pwd '/CNNmodels/highres3dnet_large_v0.3/config.ini'];
+configfile = [pwd '/CNNmodels/highres3dnet_large_v0.4/config.ini'];
 fn = dir(configfile);
 configdir = fn.folder;
 fn = dir(img);

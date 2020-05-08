@@ -14,15 +14,15 @@ for f = 1:length(imgList)
     img = ls([hippDir '*' imgList{f} '*.nii.gz']);
     img(end) = [];
     
-    if contains(img,'hemi-L')
+    if contains(img,'hemi-R')
         i = load_untouch_nii(img);
-        i.img = flip(i.img,1); % flip (only if left)
+        i.img = flip(i.img,1); % flip (only if right)
         mkdir([hippDir '/tmp']); % just to ensure this exists
         save_untouch_nii(i,[hippDir '/tmp/flipping.nii.gz']);
         img = [hippDir '/tmp/flipping.nii.gz'];
-        LR = 'L';
-    else
         LR = 'R';
+    else
+        LR = 'L';
     end
     
     system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...

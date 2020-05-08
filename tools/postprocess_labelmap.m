@@ -15,24 +15,25 @@ cropbuffer = 10; % in voxels
 tmpdir = [outprefix '/tmp/'];
 mkdir(tmpdir);
 
+labelmap = load_untouch_nii(lblname);
+sz = size(labelmap.img);
+
 % don't re-run if this exists
 if ~exist([outprefix '/labelmap-postProcess.nii.gz'],'file')
 
 %% Island Removal
 % ensures output labels are all connected (keeps only largest island), and
 % ensures the result is above a minimum size (in voxels).
-labelmap = load_untouch_nii(lblname);
-sz = size(labelmap.img);
 
-conncom = bwconncomp(labelmap.img>0);
-if length(conncom.PixelIdxList)>1
-    sizes = cellfun(@numel,conncom.PixelIdxList);
-    [~,i] = sort(sizes,'descend');
-    conncom.PixelIdxList(i(1)) = [];
-    for i = 1:length(conncom.PixelIdxList)
-        labelmap.img(conncom.PixelIdxList{i}) = 0;
-    end
-end
+% conncom = bwconncomp(labelmap.img>0);
+% if length(conncom.PixelIdxList)>1
+%     sizes = cellfun(@numel,conncom.PixelIdxList);
+%     [~,i] = sort(sizes,'descend');
+%     conncom.PixelIdxList(i(1)) = [];
+%     for i = 1:length(conncom.PixelIdxList)
+%         labelmap.img(conncom.PixelIdxList{i}) = 0;
+%     end
+% end
 
 sizeGM = length(find(labelmap.img==1)) * labelmap.hdr.dime.pixdim(2);
 if sizeGM<minHippSize
@@ -54,14 +55,14 @@ crop = [min(x)-cropbuffer, max(x)+cropbuffer;...
         min(z)-cropbuffer, max(z)+cropbuffer]';
 % ensure we don't exceed the image
 crop(crop<1)=1;
-if crop(1,2)>sz(1); crop(1,2) = sz(1); end
+if crop(2,1)>sz(1); crop(2,1) = sz(1); end
 if crop(2,2)>sz(2); crop(2,2) = sz(2); end
-if crop(3,2)>sz(3); crop(3,2) = sz(3); end
+if crop(2,3)>sz(3); crop(2,3) = sz(3); end
 
 
 midProcess = midProcess(crop(1):crop(2),crop(3):crop(4),crop(5):crop(6));
 
-% remove headers (since atlas is headless) 
+% remove headers (since atlas is headless) THIS ALSO FLIPS THE IMAGE?
 save_nii(make_nii(double(midProcess),labelmap.hdr.dime.pixdim(2:4)),...
     [tmpdir '/labelmap-midProcess.nii.gz']);
 
@@ -184,8 +185,13 @@ save_untouch_nii(warpBoth_img,warpBoth);
 %% apply transforms
 
 % get header to use for all outputs
-origheader = load_untouch_nii([outprefix '/img.nii.gz']);
-origheader.img = zeros(size(origheader.img));
+if exist([outprefix '/img.nii.gz'],'file')
+    origheader = load_untouch_nii([outprefix '/img.nii.gz']);
+    origheader.img = zeros(size(origheader.img));
+else
+    origheader = labelmap;
+    origheader.img = zeros(size(origheader.img));
+end
 
 system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
     '-i atlases/UPenn_ExVivo/Avg_lbl_JDedit_withDG_withDummy.nii.gz '...

@@ -21,7 +21,7 @@ function Resample_CoronalOblique(inimg,outdir,space,addimgs)
 mkdir(outdir);
 system(['cp ' inimg ' ' outdir '/original.nii.gz']);
 
-if ~exist('space','var') || all(space=='native')
+if ~exist('space','var') || all(space=='native') || isempty(space)
     space = 'native';
     atlas = 'CITI';
 else
@@ -33,7 +33,7 @@ if all(space=='MNI152')
     aff1 = 'misc/identity_affine.txt';
 else
     aff1 = [outdir '/0GenericAffine.mat'];
-    if ~exist('aff1','file')
+    if ~exist(aff1,'file')
         system(['bash tools/ANTsTools/runAntsImgs_Aff.sh atlases/' atlas '/orig_T2w.nii.gz ' inimg ' ' outdir]);
     end
 end
@@ -51,10 +51,6 @@ if ~exist(out)
     [~,z] = system(['fslstats ' out ' -s']);
     if str2num(z)==0
         system(['rm ' out]); % remove if failed
-    else
-        i = load_untouch_nii(out);
-        i.img = flip(i.img,1); % flip (only if left)
-        save_untouch_nii(i,out);
     end
 end
 out = [outdir '/hemi-R_img.nii.gz'];
@@ -68,6 +64,10 @@ if ~exist(out)
     [~,z] = system(['fslstats ' out ' -s']);
     if str2num(z)==0
         system(['rm ' out]); % remove if failed
+    else
+        i = load_untouch_nii(out);
+        i.img = flip(i.img,1); % flip (only if right)
+        save_untouch_nii(i,out);
     end
 end
 
@@ -92,10 +92,6 @@ if exist('addimgs','var')
     [~,z] = system(['fslstats ' out ' -s']);
             if str2num(z)==0
                 system(['rm ' out]); % remove if failed
-            else
-                i = load_untouch_nii(out);
-                i.img = flip(i.img,1); % flip (only if left)
-                save_untouch_nii(i,out);
             end
         end
         out = [outdir '/hemi-R_lbl.nii.gz'];
@@ -109,6 +105,10 @@ if exist('addimgs','var')
     [~,z] = system(['fslstats ' out ' -s']);
             if str2num(z)==0
                 system(['rm ' out]);
+            else
+                i = load_untouch_nii(out);
+                i.img = flip(i.img,1); % flip (only if right)
+                save_untouch_nii(i,out);
             end
         end
     end
