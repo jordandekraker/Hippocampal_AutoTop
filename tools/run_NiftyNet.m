@@ -6,13 +6,18 @@ function run_NiftyNet(img,outdir)
 % don't overwrite existing files
 if ~exist([outdir '/niftynet_lbl.nii.gz'],'file')
 
-tmpdir = [pwd '/' outdir '/tmp/'];
+tmpdir = [outdir '/tmp/'];
 mkdir(tmpdir);
-configfile = [pwd '/CNNmodels/highres3dnet_large_v0.4/config.ini'];
-fn = dir(configfile);
-configdir = fn.folder;
-fn = dir(img);
-outname = fn.name(1:strfind(fn.name,'.nii')-1);
+% make absolute dir
+tmp = dir(tmpdir);
+tmpdir = tmp.folder;
+% get config and model dir
+configfile = ['CNNmodels/highres3dnet_large_v0.4/config.ini'];
+tmp = dir(configfile);
+modeldir = tmp.folder;
+% get output name without dir or extension
+tmp = dir(img);
+outname = tmp.name(1:strfind(tmp.name,'.nii')-1);
 
 %% make and format new config file
 %NOTE: dataset_split.csv must not be in the model directory
@@ -24,7 +29,7 @@ Index = find(not(cellfun('isempty',i)));
 k{Index+c} = [tmpdir '/'];
 i = strfind(k,'model_dir');
 Index = find(not(cellfun('isempty',i)));
-k{Index+c} = configdir;
+k{Index+c} = modeldir;
 i = strfind(k,'image');
 Index = find(not(cellfun('isempty',i)));
 k{Index+c} = 'INFERENCEDATA';    
