@@ -47,7 +47,7 @@ for s = 2:length(subs)
         load([hippDir '/hemi-' LR '/surf.mat']);
         load([hippDir '/0GenericAffine.mat']);
         
-        img = load_nifti([hippDir '/hemi-' LR '_img.nii.gz']);        
+        img = load_nifti([hippDir '/img.nii.gz']);        
 
         % Inverse affine transformation
         itransf = [1,-1,1,-1; -1,1,1,-1; 1,1,1,1; 0,0,0,1];

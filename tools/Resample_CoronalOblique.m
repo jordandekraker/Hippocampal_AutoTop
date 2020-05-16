@@ -21,7 +21,7 @@ function Resample_CoronalOblique(inimg,outdir,space,addimgs)
 mkdir(outdir);
 system(['cp ' inimg ' ' outdir '/original.nii.gz']);
 
-if ~exist('space','var') || all(space=='native') || isempty(space)
+if ~exist('space','var') || strcmp(space,'native') || isempty(space)
     space = 'native';
     atlas = 'CITI';
 else
@@ -29,7 +29,7 @@ else
 end
 % run affine registration
 
-if all(space=='MNI152')
+if strcmp(space,'MNI152')
     aff1 = 'misc/identity_affine.txt';
 else
     aff1 = [outdir '/0GenericAffine.mat'];
@@ -39,7 +39,24 @@ else
 end
 aff2 = ['atlases/' atlas '/CoronalOblique_rigid.txt'];
 
-% apply to imgs
+%% keep a copy of each affine
+
+i = strfind(aff1,'.');
+suffix = aff1(i:end);
+system(['cp ' aff1 ' ' outdir '/sub2atlas' suffix]);
+aff1 = [outdir '/sub2atlas' sufffix];
+
+i = strfind(aff2,'.');
+suffix = aff2(i:end);
+system(['cp ' aff2 ' ' outdir '/atlas2coronalOblique' suffix]);
+aff2 = [outdir '/atlas2coronalOblique' suffix];
+
+% remove duplicate to avoid confusion
+try
+    system(['rm ' outdir '/0GenericAffine.mat']); 
+end
+
+%% apply to imgs
 out = [outdir '/hemi-L_img.nii.gz'];
 if ~exist(out)
     system(['antsApplyTransforms -d 3 --interpolation Linear '...

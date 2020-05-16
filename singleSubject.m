@@ -18,5 +18,5 @@ for LR = 'LR'
         AutoTops_TransformAndRollOut(inimgLR,outdirLR,inlblLR);
     end
     AutoTops_TransformAndRollOut(inimgLR,outdirLR);
-    Resample_Native(outdirLR,outdir,{'subfields','coords-AP'});
+    Resample_Native(outdirLR,outdir);
 end

@@ -50,21 +50,18 @@ end
 %% apply to surfaces
 
 load([hippDir '/surf.mat']);
-v = reshape(Vmid,[256*128,3]);
-itransf = [1,-1,1,-1; -1,1,1,-1; 1,1,1,1; 0,0,0,1];
 
 % Bring vertex coordinates in native space
-% TODO: confirm these transforms. off by 1, or off by 0.5?
-v(:,2) = (v(:,2));
-v(:,3) = (v(:,3));
+v = reshape(Vmid,[APres*PDres,3]);
 if LR == 'R'
     v(:,1) = sz(1)-v(:,1);
 else
-    v(:,1) = (v(:,1));
+    v(:,1) = (v(:,1)-1);
 end
+v(:,2) = (v(:,2)-1);
+v(:,3) = (v(:,3)-1);
 ras = [origheader.hdr.hist.srow_x;  origheader.hdr.hist.srow_y; origheader.hdr.hist.srow_z; 0 0 0 1];
 v = ras*[v'; ones(1,length(v))];
-
 
 % load transforms as matrices
 i = strfind(aff1,'.');
@@ -75,6 +72,7 @@ if strcmp(suffix,'.mat')
     affmat1(4,1:4) = [0,0,0,1];
 elseif strcmp(suffix,'.txt')
     affmat1 = import_txtAffine(aff1);
+    aff1 = itransf.*aff1;
 else
     error('Could not load transformation to native space');
 end
@@ -82,21 +80,24 @@ end
 i = strfind(aff2,'.');
 suffix = aff2(i(end):end);
 if strcmp(suffix,'.mat')
-    affmat2 = load(aff2);
-    affmat2 = reshape(affmat2.AffineTransform_double_3_3,[3,4]);
-    affmat2(4,1:4) = [0,0,0,1];
+    aff2 = load(aff2);
+    aff2 = reshape(aff2.AffineTransform_double_3_3,[3,4]);
+    aff2(4,1:4) = [0,0,0,1];
 elseif strcmp(suffix,'.txt')
-    affmat2 = import_txtAffine(aff2);
+    aff2 = import_txtAffine(aff2);
 else
     error('Could not load transformation back to native space');
 end
 
-% invert transforms
-affmat1 = itransf.*affmat1;
-affmat2 = itransf.*affmat2;
-% apply transforms
-v = affmat2*v;
-v = affmat1*v;
+% appply transforms
+% invert
+% aff1(1:3,1:3) = aff1(1:3,1:3)';
+% aff1(1:3,4) = -aff1(1:3,4);
+% aff2(1:3,1:3) = aff2(1:3,1:3)';
+% aff2(1:3,4) = -aff2(1:3,4);
+
+v = aff2*v;
+v = aff1*v;
 Vnative = v';
 
 % Write file
