@@ -19,6 +19,7 @@ function Resample_CoronalOblique(inimg,outdir,space,addimgs)
 % system(['fslreorient2std ' inimg ' ' inimg]);
 
 mkdir(outdir);
+outdir = [outdir '/']; % make sure this is a directory
 system(['cp ' inimg ' ' outdir '/original.nii.gz']);
 
 if ~exist('space','var') || strcmp(space,'native') || isempty(space)

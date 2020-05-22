@@ -58,9 +58,17 @@ fclose(fid);
 
 %% now run through the network
 
-system(['singularity exec '...
+t = system(['singularity exec '...
     '--nv containers/deeplearning_gpu.simg net_segment '...
     '-c ' tmpdir '/CNNinference_config.ini inference']);
+if t~=0
+    error('Could not run NiftyNet');
+end
 
 system(['mv ' tmpdir '/img_niftynet_out.nii.gz ' outdir '/niftynet_lbl.nii.gz']);
 end
+
+if ~exist([outdir '/niftynet_lbl.nii.gz'],'file')
+    error('NiftyNet output not found')
+end
+
