@@ -62,7 +62,10 @@ if crop(2,3)>sz(3); crop(2,3) = sz(3); end
 
 midProcess = midProcess(crop(1):crop(2),crop(3):crop(4),crop(5):crop(6));
 
-% remove headers (since atlas is headless) THIS ALSO FLIPS THE IMAGE?
+% remove headers (since atlas is headless)
+if labelmap.hdr.dime.pixdim(1) == -1 % prevent unintended file flips
+    midProcess = flip(midProcess,1);
+end
 save_nii(make_nii(double(midProcess),labelmap.hdr.dime.pixdim(2:4)),...
     [tmpdir '/labelmap-midProcess.nii.gz']);
 

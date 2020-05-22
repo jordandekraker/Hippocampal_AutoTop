@@ -29,11 +29,11 @@ else
 end
 % run affine registration
 
-if strcmp(space,'MNI152')
-    aff1 = 'misc/identity_affine.txt';
+if strcmp(space,'MNI152') || strcmp(space,'agile12') 
+    aff1 = 'misc/identity_affine.txt'; % dont rerun if already in one of these spaces
 else
     aff1 = [outdir '/0GenericAffine.mat'];
-    if ~exist(aff1,'file')
+    if ~exist(aff1,'file') && ~exist([outdir '/sub2atlas.mat'],'file')
         system(['bash tools/ANTsTools/runAntsImgs_Aff.sh atlases/' atlas '/orig_T2w.nii.gz ' inimg ' ' outdir]);
     end
 end
@@ -44,7 +44,7 @@ aff2 = ['atlases/' atlas '/CoronalOblique_rigid.txt'];
 i = strfind(aff1,'.');
 suffix = aff1(i:end);
 system(['cp ' aff1 ' ' outdir '/sub2atlas' suffix]);
-aff1 = [outdir '/sub2atlas' sufffix];
+aff1 = [outdir '/sub2atlas' suffix];
 
 i = strfind(aff2,'.');
 suffix = aff2(i:end);
@@ -68,6 +68,10 @@ if ~exist(out)
     [~,z] = system(['fslstats ' out ' -s']);
     if str2num(z)==0
         system(['rm ' out]); % remove if failed
+    else
+        i = load_untouch_nii(out);
+        i.img = flip(i.img,1); % flip (only if left)
+        save_untouch_nii(i,out);
     end
 end
 out = [outdir '/hemi-R_img.nii.gz'];
@@ -81,10 +85,6 @@ if ~exist(out)
     [~,z] = system(['fslstats ' out ' -s']);
     if str2num(z)==0
         system(['rm ' out]); % remove if failed
-    else
-        i = load_untouch_nii(out);
-        i.img = flip(i.img,1); % flip (only if right)
-        save_untouch_nii(i,out);
     end
 end
 
@@ -106,9 +106,13 @@ if exist('addimgs','var')
                 '-r atlases/' atlas '/img_300umCoronalOblique_hemi-L.nii.gz '...
                 '-t ' aff1 ' '...
                 '-t ' aff2]);
-    [~,z] = system(['fslstats ' out ' -s']);
+            [~,z] = system(['fslstats ' out ' -s']);
             if str2num(z)==0
                 system(['rm ' out]); % remove if failed
+            else
+                i = load_untouch_nii(out);
+                i.img = flip(i.img,1); % flip (only if left)
+                save_untouch_nii(i,out);
             end
         end
         out = [outdir '/hemi-R_lbl.nii.gz'];
@@ -119,13 +123,9 @@ if exist('addimgs','var')
                 '-r atlases/' atlas '/img_300umCoronalOblique_hemi-R.nii.gz '...
                 '-t ' aff1 ' '...
                 '-t ' aff2]);
-    [~,z] = system(['fslstats ' out ' -s']);
+            [~,z] = system(['fslstats ' out ' -s']);
             if str2num(z)==0
                 system(['rm ' out]);
-            else
-                i = load_untouch_nii(out);
-                i.img = flip(i.img,1); % flip (only if right)
-                save_untouch_nii(i,out);
             end
         end
     end

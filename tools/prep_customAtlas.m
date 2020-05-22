@@ -18,11 +18,20 @@ if ~exist('sz','var')
     sz = [128 256 128];
 end
 
+% fsl standard space
+fns = ls([dir '/*.nii.gz']);
+fns = strsplit(fns)';
+fns(end) = [];
+for f = 1:length(fns)
+    system(['fslreorient2std ' fns{f}]);
+end
+
 orig = ls([dir '/orig_*.nii.gz']); orig(end) = [];
 transform = ls([dir '/*CoronalOblique*']); transform(end) = [];
 
 % create highres reference
 system(['flirt -in ' orig ' -ref ' orig ' -applyisoxfm ' num2str(res) ' -out ' dir '/highref.nii.gz']);
+
 % apply transforms and upsample in same step
 resample_imgs = {[dir '/Mask_hemi-L.nii.gz'] [dir '/Mask_hemi-R.nii.gz'] orig};
 for r = 1:length(resample_imgs)

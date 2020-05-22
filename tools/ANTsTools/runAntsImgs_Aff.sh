@@ -26,13 +26,12 @@ tg=${tg%.nii.gz} # remove extension target
 out_fn=$tp'_space-'$tg # combine names
 
 convergence_aff="[100x50x50,1e-5,10]"
-shrink_factors_aff="16x8x4"
-smoothing_sigmas_aff="8x4x2vox"
+shrink_factors_aff="4x2x1"
+smoothing_sigmas_aff="4x2x1vox"
 radiusnbins=3
-labellist=1
 interp=Linear
 dim=3
-cost=CC # MeanSquares is faster than CC, could we use that?
+cost=MeanSquares # MeanSquares is faster than CC, could we use that?
 
 while getopts "r:C:N:i:" options; do
  case $options in
@@ -62,4 +61,7 @@ out="--output $out_dir" #$out_fn]"
 
 echo antsRegistration -d $dim --interpolation $interp $rigid $affine $out -v
 antsRegistration -d $dim --interpolation $interp $rigid $affine $out -v
+
+echo antsApplyTransforms -d $dim --interpolation $interp -i $in_target_nii -r  $in_template_nii -o $out_dir/orig_space-atlas.nii.gz -t $out_dir/0GenericAffine.mat
+antsApplyTransforms -d $dim --interpolation $interp -i $in_target_nii -r  $in_template_nii -o $out_dir/orig_space-atlas.nii.gz -t $out_dir/0GenericAffine.mat
 

@@ -31,7 +31,7 @@ for f = 1:length(imgList)
     img = ls([hippDir '/' imgList{f} '*.nii.gz']);
     img(end) = [];
     
-    if LR == 'R'
+    if LR == 'L'
         i = load_untouch_nii(img);
         i.img = flip(i.img,1); % flip (only if right)
         mkdir([hippDir '/tmp']); % just to ensure this exists
@@ -49,6 +49,7 @@ end
 
 %% apply to surfaces
 
+load([hippDir '/unfold.mat']);
 load([hippDir '/surf.mat']);
 v = reshape(Vmid,[256*128,3]);
 itransf = [1,-1,1,-1; -1,1,1,-1; 1,1,1,1; 0,0,0,1];
@@ -57,10 +58,13 @@ itransf = [1,-1,1,-1; -1,1,1,-1; 1,1,1,1; 0,0,0,1];
 % TODO: confirm these transforms. off by 1, or off by 0.5?
 v(:,2) = (v(:,2));
 v(:,3) = (v(:,3));
-if LR == 'R'
+if LR == 'L'
     v(:,1) = sz(1)-v(:,1);
 else
     v(:,1) = (v(:,1));
+end
+if origheader.hdr.dime.pixdim(1) == -1 % prevent unintended file flips
+    v(:,1) = sz(1)-v(:,1);
 end
 ras = [origheader.hdr.hist.srow_x;  origheader.hdr.hist.srow_y; origheader.hdr.hist.srow_z; 0 0 0 1];
 v = ras*[v'; ones(1,length(v))];
