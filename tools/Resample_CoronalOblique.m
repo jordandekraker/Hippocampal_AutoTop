@@ -38,24 +38,25 @@ else
         system(['bash tools/ANTsTools/runAntsImgs_Aff.sh atlases/' atlas '/orig_T2w.nii.gz ' inimg ' ' outdir]);
     end
 end
+% aff1 = 'misc/identity_affine.txt'; % dont rerun if already in one of these spaces
 aff2 = ['atlases/' atlas '/CoronalOblique_rigid.txt'];
 
 %% keep a copy of each affine
 
 i = strfind(aff1,'.');
-suffix = aff1(i:end);
+suffix = aff1(i(end):end);
 system(['cp ' aff1 ' ' outdir '/sub2atlas' suffix]);
 aff1 = [outdir '/sub2atlas' suffix];
 
 i = strfind(aff2,'.');
-suffix = aff2(i:end);
+suffix = aff2(i(end):end);
 system(['cp ' aff2 ' ' outdir '/atlas2coronalOblique' suffix]);
 aff2 = [outdir '/atlas2coronalOblique' suffix];
 
 % remove duplicate to avoid confusion
-try
-    system(['rm ' outdir '/0GenericAffine.mat']); 
-end
+% try
+%     system(['rm ' outdir '/0GenericAffine.mat']); 
+% end
 
 %% apply to imgs
 out = [outdir '/hemi-L_img.nii.gz'];
@@ -64,11 +65,13 @@ if ~exist(out)
         '-i ' inimg ' '...
         '-o ' out ' '...
         '-r atlases/' atlas '/img_300umCoronalOblique_hemi-L.nii.gz '...
-        '-t ' aff1 ' '...
-        '-t ' aff2]);
+        '-t ' aff2 ' '...
+        '-t ' aff1]);
     [~,z] = system(['fslstats ' out ' -s']);
     if str2num(z)==0
+        try
         system(['rm ' out]); % remove if failed
+        end
     else
         i = load_untouch_nii(out);
         i.img = flip(i.img,1); % flip (only if left)
@@ -81,11 +84,13 @@ if ~exist(out)
         '-i ' inimg ' '...
         '-o ' out ' '...
         '-r atlases/' atlas '/img_300umCoronalOblique_hemi-R.nii.gz '...
-        '-t ' aff1 ' '...
-        '-t ' aff2]);
+        '-t ' aff2 ' '...
+        '-t ' aff1]);
     [~,z] = system(['fslstats ' out ' -s']);
     if str2num(z)==0
+        try
         system(['rm ' out]); % remove if failed
+        end
     end
 end
 
@@ -105,11 +110,13 @@ if exist('addimgs','var')
                 '-i ' inlbl ' '...
                 '-o ' out ' '...
                 '-r atlases/' atlas '/img_300umCoronalOblique_hemi-L.nii.gz '...
-                '-t ' aff1 ' '...
-                '-t ' aff2]);
+                '-t ' aff2 ' '...
+                '-t ' aff1]);
             [~,z] = system(['fslstats ' out ' -s']);
             if str2num(z)==0
+                try
                 system(['rm ' out]); % remove if failed
+                end
             else
                 i = load_untouch_nii(out);
                 i.img = flip(i.img,1); % flip (only if left)
@@ -122,11 +129,13 @@ if exist('addimgs','var')
                 '-i ' inlbl ' '...
                 '-o ' out ' '...
                 '-r atlases/' atlas '/img_300umCoronalOblique_hemi-R.nii.gz '...
-                '-t ' aff1 ' '...
-                '-t ' aff2]);
+                '-t ' aff2 ' '...
+                '-t ' aff1]);
             [~,z] = system(['fslstats ' out ' -s']);
             if str2num(z)==0
+                try
                 system(['rm ' out]);
+                end
             end
         end
     end

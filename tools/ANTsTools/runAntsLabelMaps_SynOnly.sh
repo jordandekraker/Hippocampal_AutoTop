@@ -23,7 +23,7 @@ then
  shift 4
 
 convergence="[50x100x200,1e-7,10]"
-shrink_factors="4x2x1"
+shrink_factors="2x1x1"
 smoothing_sigmas="2x1x0.25vox" # cannot exceed 8vox (hard-coded limit in ANTS)
 radiusnbins=3
 stepsize=0.25 

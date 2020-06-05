@@ -204,8 +204,13 @@ system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
     '-t ' initAff]);
 
 i = load_untouch_nii([tmpdir '/UPenn_warped_lbl.nii.gz']);
+if labelmap.hdr.dime.pixdim(1) == -1 % flip back if unintended flip
+    i.img = flip(i.img,1);
+end
 origheader.img(crop(1):crop(2),crop(3):crop(4),crop(5):crop(6)) = i.img; % un-crop
 origheader.img(labelmap.img==7) = 7; % add cyst labels back in
+save_nii(make_nii(double(midProcess),labelmap.hdr.dime.pixdim(2:4)),...
+    [tmpdir '/labelmap-midProcess.nii.gz']);
 save_untouch_nii(origheader,[outprefix '/labelmap-postProcess.nii.gz']);
 
 system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
@@ -215,6 +220,9 @@ system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
     '-t ' warpBoth ' '...
     '-t ' initAff]);
 i = load_untouch_nii([tmpdir '/coords-AP.nii.gz']);
+if labelmap.hdr.dime.pixdim(1) == -1 % flip back if unintended flip
+    i.img = flip(i.img,1);
+end
 origheader.img(crop(1):crop(2),crop(3):crop(4),crop(5):crop(6)) = i.img; % un-crop
 save_untouch_nii(origheader,[tmpdir '/coords-AP.nii.gz']);
 
@@ -225,6 +233,9 @@ system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
     '-t ' warpBoth ' '...
     '-t ' initAff]);
 i = load_untouch_nii([tmpdir '/coords-PD.nii.gz']);
+if labelmap.hdr.dime.pixdim(1) == -1 % flip back if unintended flip
+    i.img = flip(i.img,1);
+end
 origheader.img(crop(1):crop(2),crop(3):crop(4),crop(5):crop(6)) = i.img; % un-crop
 save_untouch_nii(origheader,[tmpdir '/coords-PD.nii.gz']);
 
@@ -235,6 +246,9 @@ system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
     '-t ' warpBoth ' '...
     '-t ' initAff]);
 i = load_untouch_nii([tmpdir '/coords-IO.nii.gz']);
+if labelmap.hdr.dime.pixdim(1) == -1 % flip back if unintended flip
+    i.img = flip(i.img,1);
+end
 origheader.img(crop(1):crop(2),crop(3):crop(4),crop(5):crop(6)) = i.img; % un-crop
 save_untouch_nii(origheader,[tmpdir '/coords-IO.nii.gz']);
 

@@ -19,17 +19,10 @@ then
 
  shift 3
 
-tp=${in_template_nii##*/} # remove path template
-tp=${tp%.nii.gz} # remove extension template
-tg=${in_target_nii##*/} # remove path target
-tg=${tg%.nii.gz} # remove extension target
-out_fn=$tp'_space-'$tg # combine names
-
-convergence_aff="[100x50x50x50,1e-5,10]"
-shrink_factors_aff="16x8x4x2"
-smoothing_sigmas_aff="8x4x2x1vox"
+convergence_aff="[100x50x50,1e-5,10]"
+shrink_factors_aff="8x4x2"
+smoothing_sigmas_aff="4x2x1vox"
 radiusnbins=3
-labellist=1
 interp=Linear
 dim=3
 cost=MeanSquares # MeanSquares is faster than CC, could we use that?

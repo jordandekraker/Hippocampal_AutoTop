@@ -63,9 +63,9 @@ if LR == 'L'
 else
     v(:,1) = (v(:,1));
 end
-if origheader.hdr.dime.pixdim(1) == -1 % prevent unintended file flips
-    v(:,1) = sz(1)-v(:,1);
-end
+% if origheader.hdr.dime.pixdim(1) == -1 % prevent unintended file flips
+%     v(:,1) = sz(1)-v(:,1);
+% end
 ras = [origheader.hdr.hist.srow_x;  origheader.hdr.hist.srow_y; origheader.hdr.hist.srow_z; 0 0 0 1];
 v = ras*[v'; ones(1,length(v))];
 
