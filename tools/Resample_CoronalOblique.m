@@ -75,7 +75,7 @@ aff2 = [outdir '/atlas2coronalOblique' suffix];
 %% apply to imgs
 mkdir([outdir '/hemi-L/']);
 out = [outdir '/hemi-L/img.nii.gz'];
-if ~exist(out)
+% if ~exist(out)
     system(['antsApplyTransforms -d 3 --interpolation Linear '...
         '-i ' inimg ' '...
         '-o ' out ' '...
@@ -93,10 +93,10 @@ if ~exist(out)
         i.img = flip(i.img,1); % flip (only if left)
         save_untouch_nii(i,out);
     end
-end
+% end
 mkdir([outdir '/hemi-R/']);
 out = [outdir '/hemi-R/img.nii.gz'];
-if ~exist(out)
+% if ~exist(out)
     system(['antsApplyTransforms -d 3 --interpolation Linear '...
         '-i ' inimg ' '...
         '-o ' out ' '...
@@ -110,7 +110,7 @@ if ~exist(out)
         system(['rm ' out]); % remove if failed
         end
     end
-end
+% end
 
 %% (optional) apply to additional images (usually masks)
 
@@ -127,7 +127,7 @@ if exist('addimgs','var')
 %         system(['fslreorient2std ' inlbl ' ' inlbl]);
         
         out = [outdir '/hemi-L/lbl.nii.gz'];
-        if ~exist(out)
+%         if ~exist(out)
             system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
                 '-i ' inlbl ' '...
                 '-o ' out ' '...
@@ -145,9 +145,9 @@ if exist('addimgs','var')
                 i.img = flip(i.img,1); % flip (only if left)
                 save_untouch_nii(i,out);
             end
-        end
+%         end
         out = [outdir '/hemi-R/lbl.nii.gz'];
-        if ~exist(out)
+%         if ~exist(out)
             system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
                 '-i ' inlbl ' '...
                 '-o ' out ' '...
@@ -161,6 +161,6 @@ if exist('addimgs','var')
                 system(['rm ' out]);
                 end
             end
-        end
+%         end
     end
 end

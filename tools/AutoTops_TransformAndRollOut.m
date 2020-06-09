@@ -16,7 +16,7 @@ function AutoTops_TransformAndRollOut(inimg,outdir,inlbl)
 outdir = [outdir '/']; % ensure this is always considered a directory
 mkdir(outdir);
 system(['cp ' inimg ' ' outdir '/img.nii.gz']);
-inimg = [outdir '/img.nii.gz'];
+inimg = ls([outdir '/img.nii.gz']);
 
 %%
 % check if labelmap exists and if not, apply highres3dnet (via NiftyNet)
