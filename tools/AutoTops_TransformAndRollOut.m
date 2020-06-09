@@ -38,7 +38,7 @@ labelmap_LaplaceCoords(outdir)
 coords_SurfMap(outdir);
 
 % plot for Quality Assurance
-plot_manualQA(outdir);
+%plot_manualQA(outdir);
 
 % apply subfield boundaries
 apply_subfieldBoundaries(outdir);

@@ -75,7 +75,13 @@ i = strfind(aff1,'.');
 suffix = aff1(i(end):end);
 if strcmp(suffix,'.mat')
     affmat1 = load(aff1);
-    affmat1 = reshape(affmat1.AffineTransform_double_3_3,[3,4]);
+    if isfield(affmat1,'AffineTransform_double_3_3') %ANTs generated
+        affmat1 = reshape(affmat1.AffineTransform_double_3_3,[3,4]);
+    elseif isfield(affmat1,'MatrixOffsetTransformBase_double_3_3') %FLIRT + fsl2ras -oitk generated
+        affmat1 = reshape(affmat1.MatrixOffsetTransformBase_double_3_3,[3,4]);
+    else
+        error(['Could not interpret ' aff1]);
+    end
     affmat1(4,1:4) = [0,0,0,1];
 elseif strcmp(suffix,'.txt')
     affmat1 = import_txtAffine(aff1);
@@ -87,7 +93,13 @@ i = strfind(aff2,'.');
 suffix = aff2(i(end):end);
 if strcmp(suffix,'.mat')
     affmat2 = load(aff2);
-    affmat2 = reshape(affmat2.AffineTransform_double_3_3,[3,4]);
+    if isfield(affmat2,'AffineTransform_double_3_3') %ANTs generated
+        affmat2 = reshape(affmat2.AffineTransform_double_3_3,[3,4]);
+    elseif isfield(affmat2,'MatrixOffsetTransformBase_double_3_3') %FLIRT + fsl2ras -oitk generated
+        affmat2 = reshape(affmat2.MatrixOffsetTransformBase_double_3_3,[3,4]);
+    else
+        error(['Could not interpret ' aff2]);
+    end
     affmat2(4,1:4) = [0,0,0,1];
 elseif strcmp(suffix,'.txt')
     affmat2 = import_txtAffine(aff2);

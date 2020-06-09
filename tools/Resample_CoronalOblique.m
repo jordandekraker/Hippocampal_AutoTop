@@ -33,9 +33,15 @@ end
 if strcmp(space,'MNI152') || strcmp(space,'agile12') 
     aff1 = 'misc/identity_affine.txt'; % dont rerun if already in one of these spaces
 else
-    aff1 = [outdir '/0GenericAffine.mat'];
+    %aff1 = [outdir '/0GenericAffine.mat'];
+    aff1 = [outdir '/itk_affine.mat'];
     if ~exist(aff1,'file') && ~exist([outdir '/sub2atlas.mat'],'file')
-        system(['bash tools/ANTsTools/runAntsImgs_Aff.sh atlases/' atlas '/orig_T2w.nii.gz ' inimg ' ' outdir]);
+        %system(['bash tools/ANTsTools/runAntsImgs_Aff.sh atlases/' atlas '/orig_T2w.nii.gz ' inimg ' ' outdir]);
+        system(['flirt -ref atlases/' atlas '/orig_T2w.nii.gz -in ' inimg ' -omat ' outdir '/flirt_affine.mat']);
+        system(['c3d_affine_tool ' outdir '/flirt_affine.mat '...
+            '-src  ' inimg ' '...
+            '-ref  atlases/' atlas '/orig_T2w.nii.gz '...
+            '-fsl2ras -oitk ' outdir 'itk_affine.mat']);
     end
 end
 % aff1 = 'misc/identity_affine.txt'; % dont rerun if already in one of these spaces
@@ -45,21 +51,30 @@ aff2 = ['atlases/' atlas '/CoronalOblique_rigid.txt'];
 
 i = strfind(aff1,'.');
 suffix = aff1(i(end):end);
-system(['cp ' aff1 ' ' outdir '/sub2atlas' suffix]);
+if exists([outdir '/sub2atlas' suffix])
+    warning([outdir '/sub2atlas' suffix ' already exists, NOT overwriting']);
+else
+    system(['cp ' aff1 ' ' outdir '/sub2atlas' suffix]);
+end
 aff1 = [outdir '/sub2atlas' suffix];
 
 i = strfind(aff2,'.');
 suffix = aff2(i(end):end);
-system(['cp ' aff2 ' ' outdir '/atlas2coronalOblique' suffix]);
+if exists([outdir '/atlas2coronalOblique' suffix])
+    warning([outdir '/atlas2coronalOblique' suffix ' already exists, NOT overwriting']);
+else
+    system(['cp ' aff2 ' ' outdir '/atlas2coronalOblique' suffix]);
+end
 aff2 = [outdir '/atlas2coronalOblique' suffix];
 
 % remove duplicate to avoid confusion
 % try
-%     system(['rm ' outdir '/0GenericAffine.mat']); 
+%     system(['rm ' outdir '/0GenericAffine.mat']);
 % end
 
 %% apply to imgs
-out = [outdir '/hemi-L_img.nii.gz'];
+mkdir([outdir '/hemi-L/']);
+out = [outdir '/hemi-L/img.nii.gz'];
 if ~exist(out)
     system(['antsApplyTransforms -d 3 --interpolation Linear '...
         '-i ' inimg ' '...
@@ -69,6 +84,7 @@ if ~exist(out)
         '-t ' aff1]);
     [~,z] = system(['fslstats ' out ' -s']);
     if str2num(z)==0
+        warning('Hemi-L not found in cropped image');
         try
         system(['rm ' out]); % remove if failed
         end
@@ -78,7 +94,8 @@ if ~exist(out)
         save_untouch_nii(i,out);
     end
 end
-out = [outdir '/hemi-R_img.nii.gz'];
+mkdir([outdir '/hemi-R/']);
+out = [outdir '/hemi-R/img.nii.gz'];
 if ~exist(out)
     system(['antsApplyTransforms -d 3 --interpolation Linear '...
         '-i ' inimg ' '...
@@ -88,6 +105,7 @@ if ~exist(out)
         '-t ' aff1]);
     [~,z] = system(['fslstats ' out ' -s']);
     if str2num(z)==0
+        warning('Hemi-R not found in cropped image');
         try
         system(['rm ' out]); % remove if failed
         end
@@ -95,6 +113,10 @@ if ~exist(out)
 end
 
 %% (optional) apply to additional images (usually masks)
+
+if ~iscell(addimgs)
+    addimgs = {addimgs};
+end
 
 if exist('addimgs','var')
     for s = 1:length(addimgs)
@@ -104,7 +126,7 @@ if exist('addimgs','var')
 %         inlbl = [outdir '_lbl.nii.gz'];
 %         system(['fslreorient2std ' inlbl ' ' inlbl]);
         
-        out = [outdir '/hemi-L_lbl.nii.gz'];
+        out = [outdir '/hemi-L/lbl.nii.gz'];
         if ~exist(out)
             system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
                 '-i ' inlbl ' '...
@@ -114,6 +136,7 @@ if exist('addimgs','var')
                 '-t ' aff1]);
             [~,z] = system(['fslstats ' out ' -s']);
             if str2num(z)==0
+                warning('Hemi-L not found in cropped image');
                 try
                 system(['rm ' out]); % remove if failed
                 end
@@ -123,7 +146,7 @@ if exist('addimgs','var')
                 save_untouch_nii(i,out);
             end
         end
-        out = [outdir '/hemi-R_lbl.nii.gz'];
+        out = [outdir '/hemi-R/lbl.nii.gz'];
         if ~exist(out)
             system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
                 '-i ' inlbl ' '...
@@ -133,6 +156,7 @@ if exist('addimgs','var')
                 '-t ' aff1]);
             [~,z] = system(['fslstats ' out ' -s']);
             if str2num(z)==0
+                warning('Hemi-R not found in cropped image');
                 try
                 system(['rm ' out]);
                 end
