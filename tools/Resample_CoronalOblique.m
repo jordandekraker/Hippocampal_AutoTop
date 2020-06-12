@@ -51,7 +51,7 @@ aff2 = ['atlases/' atlas '/CoronalOblique_rigid.txt'];
 
 i = strfind(aff1,'.');
 suffix = aff1(i(end):end);
-if exists([outdir '/sub2atlas' suffix])
+if exist([outdir '/sub2atlas' suffix])
     warning([outdir '/sub2atlas' suffix ' already exists, NOT overwriting']);
 else
     system(['cp ' aff1 ' ' outdir '/sub2atlas' suffix]);
@@ -60,7 +60,7 @@ aff1 = [outdir '/sub2atlas' suffix];
 
 i = strfind(aff2,'.');
 suffix = aff2(i(end):end);
-if exists([outdir '/atlas2coronalOblique' suffix])
+if exist([outdir '/atlas2coronalOblique' suffix])
     warning([outdir '/atlas2coronalOblique' suffix ' already exists, NOT overwriting']);
 else
     system(['cp ' aff2 ' ' outdir '/atlas2coronalOblique' suffix]);
