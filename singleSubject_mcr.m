@@ -1,13 +1,14 @@
-function singleSubject(inimg,outdir,inlbl,space)
+function singleSubject_mcr(inimg,outdir,inlbl,space)
 
 %remove addpath (cannot have this for mcr - compiler takes care of it by addpath before compiling)
 %addpath(genpath('tools'));
 
-%TODO: insert more verbose usage here.
-if isempty(inimg) || isempty(outdir)
-   disp('Required arguments: INPUT_NIFTI OUTPUT_DIRECTORY not provided');
-   quit(1);
-end
+%get path of current script
+currscript = mfilename('fullpath')
+[currpath,currname,currext] = fileparts(currscript) 
+
+%change directory to current path (as dependencies are relative to it)
+cd(currpath)
 
 mkdir(outdir);
 outdir = [outdir '/']; % make sure this is a directory
