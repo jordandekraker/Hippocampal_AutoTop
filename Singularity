@@ -16,6 +16,11 @@ mkdir -p $SINGULARITY_ROOTFS/src
 cp -Rv . $SINGULARITY_ROOTFS/src
 
 %post
+
+#get CIT atlases from AK dropbox
+curl -s -L --retry 6  https://www.dropbox.com/s/40xtlok0ns4bo7j/atlases_CITI.tar | tar x -C /src
+
+
 export PATH=/opt/conda/bin:$PATH
 
 #update
@@ -46,8 +51,8 @@ pip install niftynet==0.5.0
 #niwidgets
 pip install niwidgets==0.1.3
 
-#clean up extra conda files
-conda clean --all
+#clean up extra conda tarballs
+conda clean --tarballs
 
 #install ants
 mkdir -p /opt/ants-2.3.1
@@ -77,39 +82,39 @@ curl -s -L --retry 6 http://downloads.sourceforge.net/project/c3d/c3d/Experiment
 
 
 #minify, copying required binaries to /opt/min, and clearing out extra software
-mkdir -p /opt/minified/bin
-for binary in `cat /src/dep_binaries.txt`
-do
-  binpath=`which $binary`
-  echo "copying $binary to /opt/minified/bin"
-  cp -v $binpath /opt/minified/bin
-done
+#mkdir -p /opt/minified/bin
+#for binary in `cat /src/dep_binaries.txt`
+#do
+#  binpath=`which $binary`
+#  echo "copying $binary to /opt/minified/bin"
+#  cp -v $binpath /opt/minified/bin
+#done
 
 #remove extra opt folders to save disk space
-rm -rf /opt/ants-2.3.1 /opt/c3d /opt/fsl-5.0.11
+#rm -rf /opt/ants-2.3.1 /opt/c3d /opt/fsl-5.0.11
 
 
 %environment
 
 #ants
-#export ANTSPATH="/opt/ants-2.3.1"
-#export PATH="/opt/ants-2.3.1:$PATH"
+export ANTSPATH="/opt/ants-2.3.1"
+export PATH="/opt/ants-2.3.1:$PATH"
 
 #c3d
-#export PATH="/opt/c3d/bin:$PATH"
+export PATH="/opt/c3d/bin:$PATH"
 
 #fsl
-#export FSLDIR="/opt/fsl-5.0.11"
-#export PATH="/opt/fsl-5.0.11/bin:$PATH"
+export FSLDIR="/opt/fsl-5.0.11"
+export PATH="/opt/fsl-5.0.11/bin:$PATH"
 
 #fsl env
 export FSLOUTPUTTYPE=NIFTI_GZ
 export FSLMULTIFILEQUIT=TRUE
 
 #minified path
-export ANTSPATH="/opt/minified"
-export FSLDIR="/opt/minified"
-export PATH="/opt/minified/bin:$PATH"
+#export ANTSPATH="/opt/minified"
+#export FSLDIR="/opt/minified"
+#export PATH="/opt/minified/bin:$PATH"
 
 %runscript
-exec /src/mcr_v97/run_singleSubject.sh /opt/mcr/v97 $@
+exec /src/mcr_v97/run_singleSubject_mcr.sh /opt/mcr/v97 $@

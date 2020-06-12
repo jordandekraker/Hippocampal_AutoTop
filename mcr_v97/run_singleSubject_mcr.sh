@@ -27,7 +27,7 @@ else
       args="${args} \"${token}\"" 
       shift
   done
-  eval "\"${exe_dir}/singleSubject\"" $args
+  eval "\"${exe_dir}/singleSubject_mcr\"" $args
 fi
 exit
 
