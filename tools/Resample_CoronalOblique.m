@@ -114,11 +114,13 @@ out = [outdir '/hemi-R/img.nii.gz'];
 
 %% (optional) apply to additional images (usually masks)
 
+if ~exist('addimgs','var') || isempty(addimgs)
+return
+end
+
 if ~iscell(addimgs)
     addimgs = {addimgs};
 end
-
-if exist('addimgs','var')
     for s = 1:length(addimgs)
         
         inlbl = addimgs{s};
@@ -163,4 +165,4 @@ if exist('addimgs','var')
             end
 %         end
     end
-end
+
