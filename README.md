@@ -20,27 +20,14 @@ The overall workflow can be summarized in the following steps:
 
 ### Installation
 
-_under development_
+Dependencies:
+ - ANTs
+ - FSL
+ - Singularity
+ - NiftyNet (eg. via [this singularity container](https://github.com/yinglilu/deeplearning_gpu_singularity))
+ - Matlab (MCR compiled code also available)
+ 
+Note that all dependencies can be found in [Neuroglia Helpers](https://github.com/khanlab/neuroglia-core)
 
-Currently, Matlab code is provided for steps 2-6, with [these dependencies](https://github.com/khanlab/neuroglia-core)
-
-Coming soon: fully containerized BIDSapp with MCR compiled Matlab code and all dependencies.
-
-### Examples
-
-Simple example Matlab scripts are provided showing batching of subjects that are already resampled, or running a new subject starting from a whole-brain T2w image.
-
-If you are using ComputeCanada, you can adapt one of the example scripts for your file names & directories and then submit it using:
-```
-regularSubmit matlab -r example_batchScript_manualSeg
-```
-_Note:_ you must have neuroglia-core, neuroglia-helpers, and matlab (license + module loaded). See the Khan lab ComputeCanada wiki (or request access) at https://osf.io/4u5jr.
-
-### Fully automated version
-
-_under development_
-
-This section breaks down the step 1) above into more detail. Note that all fully-automated segmentation and unfolding should be inspected prior to drawing conclusions! Useful tools are included for visualization.
-
-
+Coming soon: fully containerized BIDSapp
 
