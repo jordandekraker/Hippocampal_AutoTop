@@ -19,13 +19,16 @@ cp -Rv . $SINGULARITY_ROOTFS/src
 
 #get CIT atlases from AK dropbox
 curl -s -L --retry 6  https://www.dropbox.com/s/40xtlok0ns4bo7j/atlases_CITI.tar | tar x -C /src
-
+#make sure they are all readable
+chmod a+rX -R /src
 
 export PATH=/opt/conda/bin:$PATH
 
 #update
 apt-get update
 apt-get install -y tree unzip default-jre #jre required for MCR
+conda update conda
+conda update --all
 pip install --upgrade pip
 
 #tensorflow
@@ -52,7 +55,7 @@ pip install niftynet==0.5.0
 pip install niwidgets==0.1.3
 
 #clean up extra conda tarballs
-conda clean --tarballs
+#conda clean --tarballs
 
 #install ants
 mkdir -p /opt/ants-2.3.1
@@ -81,18 +84,6 @@ mkdir -p $C3D_DIR
 curl -s -L --retry 6 http://downloads.sourceforge.net/project/c3d/c3d/Experimental/c3d-1.1.0-Linux-gcc64.tar.gz  | tar zx -C $C3D_DIR --strip-components=1
 
 
-#minify, copying required binaries to /opt/min, and clearing out extra software
-#mkdir -p /opt/minified/bin
-#for binary in `cat /src/dep_binaries.txt`
-#do
-#  binpath=`which $binary`
-#  echo "copying $binary to /opt/minified/bin"
-#  cp -v $binpath /opt/minified/bin
-#done
-
-#remove extra opt folders to save disk space
-#rm -rf /opt/ants-2.3.1 /opt/c3d /opt/fsl-5.0.11
-
 
 %environment
 
@@ -111,10 +102,8 @@ export PATH="/opt/fsl-5.0.11/bin:$PATH"
 export FSLOUTPUTTYPE=NIFTI_GZ
 export FSLMULTIFILEQUIT=TRUE
 
-#minified path
-#export ANTSPATH="/opt/minified"
-#export FSLDIR="/opt/minified"
-#export PATH="/opt/minified/bin:$PATH"
+
+export AUTOTOP_DIR=/src
 
 %runscript
 exec /src/mcr_v97/run_singleSubject_mcr.sh /opt/mcr/v97 $@

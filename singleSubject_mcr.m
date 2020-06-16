@@ -1,6 +1,10 @@
 function singleSubject_mcr(inimg,outdir,inlbl,space)
 
-cd('/src/mcr_v97')
+autotop_dir = getenv('AUTOTOP_DIR')
+if isempty(autotop_dir)
+    disp('ERROR: you must set the AUTOTOP_DIR environment variable before running');
+    quit(1);
+end
 
 mkdir(outdir);
 outdir = [outdir '/']; % make sure this is a directory

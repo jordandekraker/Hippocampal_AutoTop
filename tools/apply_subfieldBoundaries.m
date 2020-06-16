@@ -8,7 +8,7 @@ load([outprefix 'unfold.mat']);
 load([outprefix 'surf.mat']);
 
 % get BigBrain boundaries
-load('misc/BigBrain_ManualSubfieldsUnfolded.mat');
+load([getenv('AUTOTOP_DIR') '/misc/BigBrain_ManualSubfieldsUnfolded.mat']);
 subfields_avg = imresize(subfields_avg,0.5,'nearest');
 
 Laplace_AP = ceil(Laplace_AP * APres);

@@ -12,7 +12,7 @@ mkdir(tmpdir);
 tmp = dir(tmpdir);
 tmpdir = tmp.folder;
 % get config and model dir
-configfile = ['CNNmodels/highres3dnet_large_v0.4/config.ini'];
+configfile = [getenv('AUTOTOP_DIR') '/' 'CNNmodels/highres3dnet_large_v0.4/config.ini'];
 tmp = dir(configfile);
 modeldir = tmp.folder;
 % get output name without dir or extension
