@@ -20,6 +20,7 @@ cp -Rv . $SINGULARITY_ROOTFS/src
 
 #get CIT atlases from AK dropbox
 curl -s -L --retry 6  https://www.dropbox.com/s/40xtlok0ns4bo7j/atlases_CITI.tar | tar x -C /src
+curl -s -L --retry 6  https://www.dropbox.com/s/g3jjqbrx62m9roo/atlases_UPenn_ExVivo.tar | tar x -C /src
 #make sure they are all readable
 chmod a+rX -R /src
 
