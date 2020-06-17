@@ -11,8 +11,13 @@ mkdir(tmpdir);
 % make absolute dir
 tmp = dir(tmpdir);
 tmpdir = tmp.folder;
+
+%copy model to local folder since niftynet requires write access to folder (i.e. cannot be in the container)
+cp_cmd = ['cp -Rv ' getenv('AUTOTOP_DIR') '/' 'CNNmodels/highres3dnet_large_v0.4 '  tmpdir];
+system(cp_cmd);
+
 % get config and model dir
-configfile = [getenv('AUTOTOP_DIR') '/' 'CNNmodels/highres3dnet_large_v0.4/config.ini'];
+configfile = [tmpdir '/highres3dnet_large_v0.4/config.ini'];
 tmp = dir(configfile);
 modeldir = tmp.folder;
 % get output name without dir or extension
