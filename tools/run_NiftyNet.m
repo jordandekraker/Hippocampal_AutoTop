@@ -69,7 +69,12 @@ if t~=0
     error('Could not run NiftyNet');
 end
 
-system(['mv ' tmpdir '/img_niftynet_out.nii.gz ' outdir '/niftynet_lbl.nii.gz']);
+% niftynet output filename seems to have changed in niftynet 0.6.0 (req'd for singularity build)
+% so we get the filename from the inferred.csv file instead of hard-coding it..
+csv = readtable([tmpdir '/inferred.csv'],'HeaderLines',0,'Delimiter',',','ReadVariableNames',false);
+nifty_out = csv.Var2{1};
+
+system(['mv ' nifty_out  ' ' outdir '/niftynet_lbl.nii.gz']);
 end
 
 if ~exist([outdir '/niftynet_lbl.nii.gz'],'file')
