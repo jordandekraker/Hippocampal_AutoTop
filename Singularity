@@ -1,5 +1,6 @@
 Bootstrap: docker
-From: continuumio/miniconda3:4.5.4 
+#From: continuumio/miniconda3:4.5.4 
+From: continuumio/anaconda3:2019.03
 
 #updates:
 
@@ -31,25 +32,32 @@ conda update conda
 conda update --all
 pip install --upgrade pip
 
+
 #tensorflow
-conda install tensorflow-gpu==1.12.0
+#conda install tensorflow-gpu==1.12.0
+conda install tensorflow-gpu==1.14
 
 #pytorch
-conda install -c pytorch pytorch==1.1.0 torchvision==0.3.0 cudatoolkit=9.0
+#conda install -c pytorch pytorch==1.1.0 torchvision==0.3.0 cudatoolkit=9.0
 
 #opencv
-conda install -c anaconda opencv==3.3.1
+#conda install -c anaconda opencv==3.3.1
+conda install -c anaconda opencv
 
 #scikit-learn
-conda install -c anaconda scikit-learn==0.20.3
+#conda install -c anaconda scikit-learn==0.20.3
+conda install -c anaconda scikit-learn
 
 #simpleitk
-conda install -c simpleitk simpleitk==1.2.0
+#conda install -c simpleitk simpleitk==1.2.0
+conda install -c simpleitk simpleitk
 
 #niftynet
 #need skimage, installed with anaconda3 by default.
-conda install -c anaconda pyyaml==3.13
-pip install niftynet==0.5.0
+#conda install -c anaconda pyyaml==3.13
+conda install -c anaconda pyyaml
+#pip install niftynet==0.5.0
+pip install niftynet==0.6.0
 
 #niwidgets
 pip install niwidgets==0.1.3
