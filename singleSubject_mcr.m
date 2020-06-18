@@ -1,4 +1,4 @@
-function singleSubject(inimg,outdir,inlbl,space)
+function singleSubject_mcr(inimg,outdir,inlbl,space)
 
 autotop_dir = getenv('AUTOTOP_DIR');
 if isempty(autotop_dir)
@@ -6,7 +6,6 @@ if isempty(autotop_dir)
     quit(1);
 end
 
-addpath(genpath('tools'));
 mkdir(outdir);
 outdir = [outdir '/']; % make sure this is a directory
 

@@ -11,8 +11,13 @@ mkdir(tmpdir);
 % make absolute dir
 tmp = dir(tmpdir);
 tmpdir = tmp.folder;
+
+%copy model to local folder since niftynet requires write access to folder (i.e. cannot be in the container)
+cp_cmd = ['cp -Rv ' getenv('AUTOTOP_DIR') '/' 'CNNmodels/highres3dnet_large_v0.4 '  tmpdir];
+system(cp_cmd);
+
 % get config and model dir
-configfile = ['CNNmodels/highres3dnet_large_v0.4/config.ini'];
+configfile = [tmpdir '/highres3dnet_large_v0.4/config.ini'];
 tmp = dir(configfile);
 modeldir = tmp.folder;
 % get output name without dir or extension
@@ -58,14 +63,18 @@ fclose(fid);
 
 %% now run through the network
 
-t = system(['singularity exec '...
-    '--nv containers/deeplearning_gpu.simg net_segment '...
+t = system(['net_segment '...
     '-c ' tmpdir '/CNNinference_config.ini inference']);
 if t~=0
     error('Could not run NiftyNet');
 end
 
-system(['mv ' tmpdir '/img_niftynet_out.nii.gz ' outdir '/niftynet_lbl.nii.gz']);
+% niftynet output filename seems to have changed in niftynet 0.6.0 (req'd for singularity build)
+% so we get the filename from the inferred.csv file instead of hard-coding it..
+csv = readtable([tmpdir '/inferred.csv'],'HeaderLines',0,'Delimiter',',','ReadVariableNames',false);
+nifty_out = csv.Var2{1};
+
+system(['mv ' nifty_out  ' ' outdir '/niftynet_lbl.nii.gz']);
 end
 
 if ~exist([outdir '/niftynet_lbl.nii.gz'],'file')
