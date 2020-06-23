@@ -5,4 +5,4 @@ addpath(genpath('tools'));
 
 %mcr_v97 for R2019b
 mkdir('mcr_v97')
-mcc -m -d mcr_v97 singleSubject_mcr.m
+mcc -m -d mcr_v97 singleSubject.m

@@ -6,7 +6,7 @@ if isempty(autotop_dir)
     quit(1);
 end
 
-addpath(genpath('tools'));
+try addpath(genpath('tools')); end
 mkdir(outdir);
 outdir = [outdir '/']; % make sure this is a directory
 
@@ -29,6 +29,8 @@ for LR = 'LR'
             warning([inlblLR ' not found, proceeding with Automated segmentation']);
         end
     end
-    AutoTops_TransformAndRollOut(inimgLR,outdirLR);
+    if exist(inimgLR,'file')
+        AutoTops_TransformAndRollOut(inimgLR,outdirLR);
+    end
     Resample_Native(outdirLR,outdir);
 end
