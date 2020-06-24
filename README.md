@@ -28,4 +28,4 @@ Coming soon: fully containerized BIDSapp
 
 ### Usage
 
-SingleSubject \<input T2w image\> \<output directory\> \<OPTIONAL manual tissue segmentation\> \<OPTIONAL study-specific reference atlas for cropping around the hippocampi\>
+singleSubject \<input T2w image\> \<output directory\> \<OPTIONAL manual tissue segmentation\> \<OPTIONAL study-specific reference atlas for cropping around the hippocampi\>
