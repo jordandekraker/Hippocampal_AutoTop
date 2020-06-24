@@ -2,6 +2,8 @@
 
 This tool aims to automatically model the topological folding structure of the human hippocampus. It is currently set up to use sub-millimetric T2w MRI data, but may be adapted for other data types. This can then be used to apply the hippocampal unfolding methods presented in [this paper](https://www.sciencedirect.com/science/article/pii/S1053811917309977), and ex-vivo subfield boundaries can be topologically applied from [this paper](https://www.sciencedirect.com/science/article/pii/S105381191930919X?via%3Dihub).
 
+![Pipeline Overview](https://github.com/jordandekraker/Hippocampal_AutoTop/blob/master/misc/pipeline_overview.png)
+
 The overall workflow can be summarized in the following steps:
 
 0) Resampling to a 0.3mm isotropic, coronal oblique, cropped hippocampal block
@@ -12,7 +14,7 @@ The overall workflow can be summarized in the following steps:
 
 3) Imposing of coordinates across the anterior-posterior, proximal-distal, and laminar dimensions of hippocampal grey matter via solving the Laplace equation
 
-4) Extraction of a grey matter mid-surface and morpholigical features (thickness, curvature, gyrification index, and, if available, quantitative MRI values sampled along the mid-surface)
+4) Extraction of a grey matter mid-surface and morpholigical features (thickness, curvature, gyrification index, and, if available, quantitative MRI values sampled along the mid-surface for reduced partial-voluming)
 
 5) Quality assurance via inspection of Laplace gradients, grey matter mid-surface, and flatmapped features
 
@@ -20,14 +22,7 @@ The overall workflow can be summarized in the following steps:
 
 ### Installation
 
-Dependencies:
- - ANTs
- - FSL
- - Singularity
- - NiftyNet (eg. via [this singularity container](https://github.com/yinglilu/deeplearning_gpu_singularity))
- - Matlab (MCR compiled code also available)
- 
-Note that all dependencies can be found in [Neuroglia Helpers](https://github.com/khanlab/neuroglia-core)
+Docker or Singularity container available on request (no public release available yet).
 
 Coming soon: fully containerized BIDSapp
 
