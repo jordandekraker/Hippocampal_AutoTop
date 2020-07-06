@@ -1,6 +1,6 @@
 ### Summary
 
-This tool aims to automatically model the topological folding structure of the human hippocampus. It is currently set up to use sub-millimetric T2w MRI data, but may be adapted for other data types. This can then be used to apply the hippocampal unfolding methods presented in [this paper](https://www.sciencedirect.com/science/article/pii/S1053811917309977), and ex-vivo subfield boundaries can be topologically applied from [this paper](https://www.sciencedirect.com/science/article/pii/S105381191930919X?via%3Dihub).
+This tool aims to automatically model the topological folding structure of the human hippocampus. It is currently set up to use sub-millimetric T2w MRI data, but may be adapted for other data types. This can then be used to apply the hippocampal unfolding methods presented in [DeKraker et al., 2019](https://www.sciencedirect.com/science/article/pii/S1053811917309977), and ex-vivo subfield boundaries can be topologically applied from [DeKraker et al., 2020](https://www.sciencedirect.com/science/article/pii/S105381191930919X?via%3Dihub).
 
 ![Pipeline Overview](https://github.com/jordandekraker/Hippocampal_AutoTop/blob/master/misc/pipeline_overview.png)
 
