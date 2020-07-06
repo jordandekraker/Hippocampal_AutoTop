@@ -1,0 +1,427 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>report_html</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-05-08"><meta name="DC.source" content="report_html.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Quality Assurance metrics and images</a></li><li><a href="#2">Midsurf mesh</a></li><li><a href="#3">Inspect Anterior-Posterior gradient</a></li><li><a href="#4">Inspect Proximal-Distal gradient</a></li><li><a href="#5">Inspect Inner-Outer gradient</a></li><li><a href="#6">Inspect extracted quantitative data</a></li><li><a href="#7">Thickness</a></li><li><a href="#8">Gyrification index</a></li><li><a href="#9">Quantitative MRI</a></li></ul></div><h2 id="1">Quality Assurance metrics and images</h2><p>Please inspect these prior to interpreting any results! Errors in manually or automatically generated labelmaps can lead to incorrect unfolding. Use this tool to ensure measures are correct.</p><pre class="codeinput"><span class="keyword">try</span>
+    sampleprefix = out_filename; <span class="comment">%sometimes used this as variable name, catch it just in case</span>
+<span class="keyword">end</span>
+load([sampleprefix <span class="string">'unfold.mat'</span>]);<span class="comment">%, '-regexp', '^(?!sampleprefix)\w');</span>
+load([sampleprefix <span class="string">'surf.mat'</span>], <span class="string">'-regexp'</span>, <span class="string">'^(?!sampleprefix)\w'</span>);
+T2w = ls([sampleprefix <span class="string">'img.nii.gz'</span>]);
+T2w(end) = [];
+T2w = load_untouch_nii(T2w);
+T2w = T2w.img;
+</pre><h2 id="2">Midsurf mesh</h2><p>This is the quickest way to ensure unfolding is correct. If this mesh is smooth and has relatively consistent face sizes then the other results are most likely correct.</p><pre class="codeinput"><span class="comment">% distance between neighbouring vertices (in voxels)</span>
+APdist = imresize(sum(diff(Vmid,1,1),3),[APres,PDres]);
+PDdist = imresize(sum(diff(Vmid,1,2),3),[APres,PDres]);
+
+<span class="comment">% conver to perimiter</span>
+MeshFacePerimiter = (2*APdist + 2*PDdist) /2;
+
+<span class="comment">% standard deviation in face perimeters should not exceed 1</span>
+SDFacePerimiter = std(MeshFacePerimiter(:));
+fprintf(<span class="string">'Standard deviation of face perimiters: %.3f\n'</span>,SDFacePerimiter);
+disp(<span class="string">'This should be &lt;1.0'</span>);
+
+<span class="comment">% view mesh in 3D</span>
+views = 1:30:360;
+FV.faces = F;
+FV.vertices = reshape(Vmid,[APres*PDres,3]);
+<span class="keyword">for</span> v = 1:length(views)
+    h = figure; <span class="comment">%('units','normalized','outerposition',[0 0 0.2 0.2]);</span>
+    view(views(v),30);
+    p = patch(FV);
+    axis <span class="string">equal</span> <span class="string">tight</span>;
+    light; axis <span class="string">equal</span> <span class="string">tight</span>;
+    p.LineStyle = <span class="string">'none'</span>;
+    p.FaceColor = <span class="string">'b'</span>;
+    material <span class="string">dull</span>;
+    set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>));
+    drawnow;
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Standard deviation of face perimiters: 0.783
+This should be &lt;1.0
+</pre><img vspace="5" hspace="5" src="report_html_01.png" alt=""> <img vspace="5" hspace="5" src="report_html_02.png" alt=""> <img vspace="5" hspace="5" src="report_html_03.png" alt=""> <img vspace="5" hspace="5" src="report_html_04.png" alt=""> <img vspace="5" hspace="5" src="report_html_05.png" alt=""> <img vspace="5" hspace="5" src="report_html_06.png" alt=""> <img vspace="5" hspace="5" src="report_html_07.png" alt=""> <img vspace="5" hspace="5" src="report_html_08.png" alt=""> <img vspace="5" hspace="5" src="report_html_09.png" alt=""> <img vspace="5" hspace="5" src="report_html_10.png" alt=""> <img vspace="5" hspace="5" src="report_html_11.png" alt=""> <img vspace="5" hspace="5" src="report_html_12.png" alt=""> <h2 id="3">Inspect Anterior-Posterior gradient</h2><p>This should increase evenly from the MTL cortex boundary to the inner-most Dentate Gyrus granule cell layer. Look for 'bridges' across digitations or through the SRLM.</p><pre class="codeinput">alpha3d = zeros(sz);
+alpha3d(idxgm) = 0.5;
+grad3d = alpha3d;
+grad3d(idxgm) = Laplace_AP;
+<span class="comment">% set 95% colourmap window</span>
+t = sort(T2w(:));
+t(isnan(t)) = [];
+window = [t(round(length(t)*.05)) t(round(length(t)*.95))];
+[x,y,z] = ind2sub(sz,idxgm);
+slices = max(y)-4:-8:min(y);
+
+<span class="keyword">for</span> s=1:length(slices)
+    f1 = figure; <span class="comment">%('units','normalized','outerposition',[0 0 0.2 0.2]);</span>
+    h1 = axes;
+    t2 = imagesc(h1,squeeze(T2w(:,slices(s),:))');
+    colormap(h1,<span class="string">'gray'</span>);
+    caxis(window);
+    set(h1,<span class="string">'ydir'</span>,<span class="string">'normal'</span>);
+    axis <span class="string">equal</span> <span class="string">tight</span> <span class="string">off</span>;
+    set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>));
+    h2 = axes;
+    ap = imagesc(squeeze(grad3d(:,slices(s),:))',<span class="keyword">...</span>
+        <span class="string">'alphadata'</span>,squeeze(alpha3d(:,slices(s),:))');
+    caxis(h2,[0 1]);
+    set(h2,<span class="string">'color'</span>,<span class="string">'none'</span>,<span class="string">'visible'</span>,<span class="string">'off'</span>)
+    colormap(h2,<span class="string">'parula'</span>);
+    set(h2,<span class="string">'ydir'</span>,<span class="string">'normal'</span>);
+    linkaxes([h1 h2]);
+    axis <span class="string">equal</span> <span class="string">tight</span> <span class="string">off</span>;
+    set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>));
+    drawnow;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="report_html_13.png" alt=""> <img vspace="5" hspace="5" src="report_html_14.png" alt=""> <img vspace="5" hspace="5" src="report_html_15.png" alt=""> <img vspace="5" hspace="5" src="report_html_16.png" alt=""> <img vspace="5" hspace="5" src="report_html_17.png" alt=""> <img vspace="5" hspace="5" src="report_html_18.png" alt=""> <img vspace="5" hspace="5" src="report_html_19.png" alt=""> <img vspace="5" hspace="5" src="report_html_20.png" alt=""> <img vspace="5" hspace="5" src="report_html_21.png" alt=""> <img vspace="5" hspace="5" src="report_html_22.png" alt=""> <img vspace="5" hspace="5" src="report_html_23.png" alt=""> <img vspace="5" hspace="5" src="report_html_24.png" alt=""> <img vspace="5" hspace="5" src="report_html_25.png" alt=""> <img vspace="5" hspace="5" src="report_html_26.png" alt=""> <img vspace="5" hspace="5" src="report_html_27.png" alt=""> <img vspace="5" hspace="5" src="report_html_28.png" alt=""> <img vspace="5" hspace="5" src="report_html_29.png" alt=""> <img vspace="5" hspace="5" src="report_html_30.png" alt=""> <img vspace="5" hspace="5" src="report_html_31.png" alt=""> <img vspace="5" hspace="5" src="report_html_32.png" alt=""> <h2 id="4">Inspect Proximal-Distal gradient</h2><p>This should increase evenly from the antero-medial HATA boundary to the postero-medial indiseum griseum border. Look for 'bridges' across or through the SRLM.</p><pre class="codeinput">alpha3d = zeros(sz);
+alpha3d(idxgm) = 0.75;
+grad3d = alpha3d;
+grad3d(idxgm) = Laplace_PD;
+
+<span class="keyword">for</span> s=1:length(slices)
+    f1 = figure; <span class="comment">%('units','normalized','outerposition',[0 0 0.2 0.2]);</span>
+    h1 = axes;
+    t2 = imagesc(h1,squeeze(T2w(:,slices(s),:))');
+    colormap(h1,<span class="string">'gray'</span>);
+    caxis(window);
+    set(h1,<span class="string">'ydir'</span>,<span class="string">'normal'</span>);
+    axis <span class="string">equal</span> <span class="string">tight</span> <span class="string">off</span>;
+    set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>));
+    h2 = axes;
+    ap = imagesc(squeeze(grad3d(:,slices(s),:))',<span class="keyword">...</span>
+        <span class="string">'alphadata'</span>,squeeze(alpha3d(:,slices(s),:))');
+    caxis(h2,[0 1]);
+    set(h2,<span class="string">'color'</span>,<span class="string">'none'</span>,<span class="string">'visible'</span>,<span class="string">'off'</span>)
+    colormap(h2,<span class="string">'parula'</span>);
+    set(h2,<span class="string">'ydir'</span>,<span class="string">'normal'</span>);
+    linkaxes([h1 h2]);
+    axis <span class="string">equal</span> <span class="string">tight</span> <span class="string">off</span>;
+    set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>))
+    drawnow;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="report_html_33.png" alt=""> <img vspace="5" hspace="5" src="report_html_34.png" alt=""> <img vspace="5" hspace="5" src="report_html_35.png" alt=""> <img vspace="5" hspace="5" src="report_html_36.png" alt=""> <img vspace="5" hspace="5" src="report_html_37.png" alt=""> <img vspace="5" hspace="5" src="report_html_38.png" alt=""> <img vspace="5" hspace="5" src="report_html_39.png" alt=""> <img vspace="5" hspace="5" src="report_html_40.png" alt=""> <img vspace="5" hspace="5" src="report_html_41.png" alt=""> <img vspace="5" hspace="5" src="report_html_42.png" alt=""> <img vspace="5" hspace="5" src="report_html_43.png" alt=""> <img vspace="5" hspace="5" src="report_html_44.png" alt=""> <img vspace="5" hspace="5" src="report_html_45.png" alt=""> <img vspace="5" hspace="5" src="report_html_46.png" alt=""> <img vspace="5" hspace="5" src="report_html_47.png" alt=""> <img vspace="5" hspace="5" src="report_html_48.png" alt=""> <img vspace="5" hspace="5" src="report_html_49.png" alt=""> <img vspace="5" hspace="5" src="report_html_50.png" alt=""> <img vspace="5" hspace="5" src="report_html_51.png" alt=""> <img vspace="5" hspace="5" src="report_html_52.png" alt=""> <h2 id="5">Inspect Inner-Outer gradient</h2><p>This should increase evenly from the inner surface to the outer surface. Look for areas where the inner (or equavalently extended inner surface over the subiculum or vert. uncus) is absent, or where no gradient is present</p><pre class="codeinput">alpha3d = zeros(sz);
+alpha3d(idxgm) = 0.75;
+grad3d = alpha3d;
+grad3d(idxgm) = Laplace_IO;
+
+<span class="keyword">for</span> s=1:length(slices)
+    f1 = figure; <span class="comment">%('units','normalized','outerposition',[0 0 0.2 0.2]);</span>
+    h1 = axes;
+    t2 = imagesc(h1,squeeze(T2w(:,slices(s),:))');
+    colormap(h1,<span class="string">'gray'</span>);
+    caxis(window);
+    set(h1,<span class="string">'ydir'</span>,<span class="string">'normal'</span>);
+    axis <span class="string">equal</span> <span class="string">tight</span> <span class="string">off</span>;
+    set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>));
+    h2 = axes;
+    ap = imagesc(squeeze(grad3d(:,slices(s),:))',<span class="keyword">...</span>
+        <span class="string">'alphadata'</span>,squeeze(alpha3d(:,slices(s),:))');
+    caxis(h2,[0 1]);
+    set(h2,<span class="string">'color'</span>,<span class="string">'none'</span>,<span class="string">'visible'</span>,<span class="string">'off'</span>)
+    colormap(h2,<span class="string">'parula'</span>);
+    set(h2,<span class="string">'ydir'</span>,<span class="string">'normal'</span>);
+    linkaxes([h1 h2]);
+    axis <span class="string">equal</span> <span class="string">tight</span> <span class="string">off</span>;
+    set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>));
+    drawnow;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="report_html_53.png" alt=""> <img vspace="5" hspace="5" src="report_html_54.png" alt=""> <img vspace="5" hspace="5" src="report_html_55.png" alt=""> <img vspace="5" hspace="5" src="report_html_56.png" alt=""> <img vspace="5" hspace="5" src="report_html_57.png" alt=""> <img vspace="5" hspace="5" src="report_html_58.png" alt=""> <img vspace="5" hspace="5" src="report_html_59.png" alt=""> <img vspace="5" hspace="5" src="report_html_60.png" alt=""> <img vspace="5" hspace="5" src="report_html_61.png" alt=""> <img vspace="5" hspace="5" src="report_html_62.png" alt=""> <img vspace="5" hspace="5" src="report_html_63.png" alt=""> <img vspace="5" hspace="5" src="report_html_64.png" alt=""> <img vspace="5" hspace="5" src="report_html_65.png" alt=""> <img vspace="5" hspace="5" src="report_html_66.png" alt=""> <img vspace="5" hspace="5" src="report_html_67.png" alt=""> <img vspace="5" hspace="5" src="report_html_68.png" alt=""> <img vspace="5" hspace="5" src="report_html_69.png" alt=""> <img vspace="5" hspace="5" src="report_html_70.png" alt=""> <img vspace="5" hspace="5" src="report_html_71.png" alt=""> <img vspace="5" hspace="5" src="report_html_72.png" alt=""> <h2 id="6">Inspect extracted quantitative data</h2><p>These measures should differ between subfields, but can be somewhat noisy on invidivual subject data. Look for outliers</p><h2 id="7">Thickness</h2><p>Thicknesses should vary from ~0.5mm to 2.5mm, and should be highest in subiculum and CA4, lowest in CA2 and CA3</p><pre class="codeinput">figure; <span class="comment">%('units','normalized','outerposition',[0 0 0.3 0.3]);</span>
+plot_foldunfold(streamlengths,FV,true,<span class="string">''</span>);
+set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>));
+drawnow;
+figure; <span class="comment">%('units','normalized','outerposition',[0 0 0.2 0.2]);</span>
+hist(streamlengths(:),100);
+set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>));
+drawnow;
+</pre><img vspace="5" hspace="5" src="report_html_73.png" alt=""> <img vspace="5" hspace="5" src="report_html_74.png" alt=""> <h2 id="8">Gyrification index</h2><p>Gyrification index is measured as the difference in surface area between unfolded and native space (or the amount of distortion that results from flatmapping). Should be distributed around 1 but can have a very large positive tail if unfolding is not correct.</p><pre class="codeinput">figure; <span class="comment">%('units','normalized','outerposition',[0 0 0.3 0.3]);</span>
+plot_foldunfold(GI,FV,true,<span class="string">''</span>);
+set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>));
+drawnow;
+figure; <span class="comment">%('units','normalized','outerposition',[0 0 0.2 0.2]);</span>
+hist(GI(:),100);
+set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>));
+drawnow;
+</pre><img vspace="5" hspace="5" src="report_html_75.png" alt=""> <img vspace="5" hspace="5" src="report_html_76.png" alt=""> <h2 id="9">Quantitative MRI</h2><p>This measure samples the original input image along the midsurface of hippocampal grey matter to minimize partial voluming effects from surrounding structures (alveus, SRLM, cysts, ventricles, blood vessels, etc). The distribution will depend on the input image but should fall withing grey matter range. Generally higher intracortical myelin is seen in subiculum and CA3.</p><pre class="codeinput"><span class="keyword">try</span>
+    figure; <span class="comment">%('units','normalized','outerposition',[0 0 0.3 0.3]);</span>
+    plot_foldunfold(qMap,FV,true,<span class="string">''</span>);
+    set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>));
+    drawnow;
+    figure; <span class="comment">%('units','normalized','outerposition',[0 0 0.2 0.2]);</span>
+    hist(qMap(:),100);
+    set(gca,<span class="string">'LooseInset'</span>,get(gca,<span class="string">'TightInset'</span>));
+    drawnow;
+<span class="keyword">catch</span>
+    disp(<span class="string">'No MRI image found to sample'</span>);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="report_html_77.png" alt=""> <img vspace="5" hspace="5" src="report_html_78.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Quality Assurance metrics and images
+% Please inspect these prior to interpreting any results! Errors in
+% manually or automatically generated labelmaps can lead to incorrect
+% unfolding. Use this tool to ensure measures are correct.
+
+try
+    sampleprefix = out_filename; %sometimes used this as variable name, catch it just in case
+end
+load([sampleprefix 'unfold.mat']);%, '-regexp', '^(?!sampleprefix)\w');
+load([sampleprefix 'surf.mat'], '-regexp', '^(?!sampleprefix)\w');
+T2w = ls([sampleprefix 'img.nii.gz']);
+T2w(end) = [];
+T2w = load_untouch_nii(T2w);
+T2w = T2w.img;
+
+%% Midsurf mesh
+% This is the quickest way to ensure unfolding is correct. If this mesh is
+% smooth and has relatively consistent face sizes then the other results are most likely correct.
+
+% distance between neighbouring vertices (in voxels)
+APdist = imresize(sum(diff(Vmid,1,1),3),[APres,PDres]);
+PDdist = imresize(sum(diff(Vmid,1,2),3),[APres,PDres]);
+
+% conver to perimiter
+MeshFacePerimiter = (2*APdist + 2*PDdist) /2;
+
+% standard deviation in face perimeters should not exceed 1
+SDFacePerimiter = std(MeshFacePerimiter(:));
+fprintf('Standard deviation of face perimiters: %.3f\n',SDFacePerimiter);
+disp('This should be <1.0');
+
+% view mesh in 3D
+views = 1:30:360;
+FV.faces = F;
+FV.vertices = reshape(Vmid,[APres*PDres,3]);
+for v = 1:length(views)
+    h = figure; %('units','normalized','outerposition',[0 0 0.2 0.2]);
+    view(views(v),30);
+    p = patch(FV); 
+    axis equal tight;
+    light; axis equal tight; 
+    p.LineStyle = 'none'; 
+    p.FaceColor = 'b'; 
+    material dull;
+    set(gca,'LooseInset',get(gca,'TightInset'));
+    drawnow;
+end
+
+%% Inspect Anterior-Posterior gradient
+% This should increase evenly from the MTL cortex boundary to the
+% inner-most Dentate Gyrus granule cell layer. Look for 'bridges' across
+% digitations or through the SRLM.
+
+alpha3d = zeros(sz);
+alpha3d(idxgm) = 0.5;
+grad3d = alpha3d;
+grad3d(idxgm) = Laplace_AP;
+% set 95% colourmap window
+t = sort(T2w(:));
+t(isnan(t)) = [];
+window = [t(round(length(t)*.05)) t(round(length(t)*.95))];
+[x,y,z] = ind2sub(sz,idxgm);
+slices = max(y)-4:-8:min(y);
+
+for s=1:length(slices)
+    f1 = figure; %('units','normalized','outerposition',[0 0 0.2 0.2]);
+    h1 = axes;
+    t2 = imagesc(h1,squeeze(T2w(:,slices(s),:))');
+    colormap(h1,'gray');
+    caxis(window);
+    set(h1,'ydir','normal');
+    axis equal tight off;
+    set(gca,'LooseInset',get(gca,'TightInset'));
+    h2 = axes;
+    ap = imagesc(squeeze(grad3d(:,slices(s),:))',...
+        'alphadata',squeeze(alpha3d(:,slices(s),:))');
+    caxis(h2,[0 1]);
+    set(h2,'color','none','visible','off')
+    colormap(h2,'parula');
+    set(h2,'ydir','normal');
+    linkaxes([h1 h2]);
+    axis equal tight off;
+    set(gca,'LooseInset',get(gca,'TightInset'));
+    drawnow;
+end
+
+%% Inspect Proximal-Distal gradient
+% This should increase evenly from the antero-medial HATA boundary to the
+% postero-medial indiseum griseum border. Look for 'bridges' across
+% or through the SRLM.
+
+alpha3d = zeros(sz);
+alpha3d(idxgm) = 0.75;
+grad3d = alpha3d;
+grad3d(idxgm) = Laplace_PD;
+
+for s=1:length(slices)
+    f1 = figure; %('units','normalized','outerposition',[0 0 0.2 0.2]);
+    h1 = axes;
+    t2 = imagesc(h1,squeeze(T2w(:,slices(s),:))');
+    colormap(h1,'gray');
+    caxis(window);
+    set(h1,'ydir','normal');
+    axis equal tight off;
+    set(gca,'LooseInset',get(gca,'TightInset'));
+    h2 = axes;
+    ap = imagesc(squeeze(grad3d(:,slices(s),:))',...
+        'alphadata',squeeze(alpha3d(:,slices(s),:))');
+    caxis(h2,[0 1]);
+    set(h2,'color','none','visible','off')
+    colormap(h2,'parula');
+    set(h2,'ydir','normal');
+    linkaxes([h1 h2]);
+    axis equal tight off;
+    set(gca,'LooseInset',get(gca,'TightInset'))
+    drawnow;
+end
+
+%% Inspect Inner-Outer gradient
+% This should increase evenly from the inner surface to the outer surface.
+% Look for areas where the inner (or equavalently extended inner surface
+% over the subiculum or vert. uncus) is absent, or where no gradient is
+% present
+
+alpha3d = zeros(sz);
+alpha3d(idxgm) = 0.75;
+grad3d = alpha3d;
+grad3d(idxgm) = Laplace_IO;
+
+for s=1:length(slices)
+    f1 = figure; %('units','normalized','outerposition',[0 0 0.2 0.2]);
+    h1 = axes;
+    t2 = imagesc(h1,squeeze(T2w(:,slices(s),:))');
+    colormap(h1,'gray');
+    caxis(window);
+    set(h1,'ydir','normal');
+    axis equal tight off;
+    set(gca,'LooseInset',get(gca,'TightInset'));
+    h2 = axes;
+    ap = imagesc(squeeze(grad3d(:,slices(s),:))',...
+        'alphadata',squeeze(alpha3d(:,slices(s),:))');
+    caxis(h2,[0 1]);
+    set(h2,'color','none','visible','off')
+    colormap(h2,'parula');
+    set(h2,'ydir','normal');
+    linkaxes([h1 h2]);
+    axis equal tight off;
+    set(gca,'LooseInset',get(gca,'TightInset'));
+    drawnow;
+end
+
+%% Inspect extracted quantitative data
+% These measures should differ between subfields, but can be somewhat noisy
+% on invidivual subject data. Look for outliers
+
+%% Thickness
+% Thicknesses should vary from ~0.5mm to 2.5mm, and should be highest in
+% subiculum and CA4, lowest in CA2 and CA3
+
+figure; %('units','normalized','outerposition',[0 0 0.3 0.3]);
+plot_foldunfold(streamlengths,FV,true,'');
+set(gca,'LooseInset',get(gca,'TightInset'));
+drawnow;
+figure; %('units','normalized','outerposition',[0 0 0.2 0.2]);
+hist(streamlengths(:),100);
+set(gca,'LooseInset',get(gca,'TightInset'));
+drawnow;
+
+%% Gyrification index
+% Gyrification index is measured as the difference in surface area between
+% unfolded and native space (or the amount of distortion that results from
+% flatmapping). Should be distributed around 1 but can have a very large
+% positive tail if unfolding is not correct.
+
+figure; %('units','normalized','outerposition',[0 0 0.3 0.3]);
+plot_foldunfold(GI,FV,true,'');
+set(gca,'LooseInset',get(gca,'TightInset'));
+drawnow;
+figure; %('units','normalized','outerposition',[0 0 0.2 0.2]);
+hist(GI(:),100);
+set(gca,'LooseInset',get(gca,'TightInset'));
+drawnow;
+
+%% Quantitative MRI
+% This measure samples the original input image along the midsurface of
+% hippocampal grey matter to minimize partial voluming effects from
+% surrounding structures (alveus, SRLM, cysts, ventricles, blood vessels,
+% etc). The distribution will depend on the input image but should fall
+% withing grey matter range. Generally higher intracortical myelin is seen
+% in subiculum and CA3.
+
+try
+    figure; %('units','normalized','outerposition',[0 0 0.3 0.3]);
+    plot_foldunfold(qMap,FV,true,'');
+    set(gca,'LooseInset',get(gca,'TightInset'));
+    drawnow;
+    figure; %('units','normalized','outerposition',[0 0 0.2 0.2]);
+    hist(qMap(:),100);
+    set(gca,'LooseInset',get(gca,'TightInset'));
+    drawnow;
+catch
+    disp('No MRI image found to sample');
+end
+
+##### SOURCE END #####
+--></body></html>
