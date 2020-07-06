@@ -115,4 +115,4 @@ export FSLMULTIFILEQUIT=TRUE
 export AUTOTOP_DIR=/src
 
 %runscript
-exec /src/mcr_v97/run_singleSubject_mcr.sh /opt/mcr/v97 $@
+exec /src/mcr_v97/run_singleSubject.sh /opt/mcr/v97 $@
