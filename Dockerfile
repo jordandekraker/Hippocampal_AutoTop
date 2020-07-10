@@ -1,24 +1,14 @@
 FROM continuumio/anaconda3:2019.03
 
-MAINTAINER <jordandekraker@gmail.com>
+MAINTAINER jordandekraker@gmail.com
 
 # base directory for Hippocampal_AutoTop
-RUN mkdir -p /src/ 
-ENV AUTOTOP_DIR=/src
-
-ENV ANTSPATH="/opt/ants-2.3.1"
-ENV PATH="/opt/ants-2.3.1:$PATH"
-ENV PATH="/opt/c3d/bin:$PATH"
-ENV FSLDIR="/opt/fsl-5.0.11"
-ENV PATH="/opt/fsl-5.0.11/bin:$PATH"
-ENV FSLOUTPUTTYPE=NIFTI_GZ
-ENV FSLMULTIFILEQUIT=TRUE
+RUN mkdir -p /src/
+COPY . /src
 
 # software dependencies
-RUN export PATH=/opt/conda/bin:$PATH
+ENV PATH /opt/conda/bin:$PATH
 RUN apt-get update
-RUN apt-get install -y git
-RUN git clone https://github.com/jordandekraker/Hippocampal_AutoTop.git /src/
 RUN apt-get install -y tree unzip default-jre #jre required for MCR
 RUN conda update conda
 RUN conda update --all
@@ -49,10 +39,13 @@ RUN curl -s -L --retry 6  https://www.dropbox.com/s/40xtlok0ns4bo7j/atlases_CITI
 RUN curl -s -L --retry 6  https://www.dropbox.com/s/g3jjqbrx62m9roo/atlases_UPenn_ExVivo.tar | tar x -C /src
 RUN chmod a+rX -R /src
 
+ENV AUTOTOP_DIR /src
+ENV PATH "/opt/ants-2.3.1:$PATH"
+ENV PATH "/opt/c3d/bin:$PATH"
+ENV FSLDIR "/opt/fsl-5.0.11"
+ENV PATH "/opt/fsl-5.0.11/bin:$PATH"
+ENV FSLOUTPUTTYPE NIFTI_GZ
+ENV FSLMULTIFILEQUIT TRUE
 
-# Note: this line currently causes the Docker build to fail.
-# In the singularity recipe, this line is used to run singleSubject.sh on the input+output. 
-# In Docker, the input+output will instead have to be mounted, and its not clear whether a 
-# this code can be called in such an elegant manner. May make sense to create a python wrapper
-# that is BIDS-compliant FIRST and then call that inside the Docker container...
-# ENTRYPOINT /src/mcr_v97/run_singleSubject.sh /opt/mcr/v97 $@
+
+ENTRYPOINT ["/src/mcr_v97/run_singleSubject.sh", "/opt/mcr/v97" ]
