@@ -32,7 +32,7 @@ RUN unzip /opt/mcr-install/install.zip -d /opt/mcr-install
 RUN /opt/mcr-install/install -mode silent -agreeToLicense yes -destinationFolder /opt/mcr
 RUN rm -rf /opt/mcr-install
 RUN mkdir -p /opt/c3d
-RUN curl -s -L --retry 6 http://downloads.sourceforge.net/project/c3d/c3d/Experimental/c3d-1.1.0-Linux-gcc64.tar.gz  | tar zx -C /opt/c3d --strip-components=1
+RUN curl -s -L --retry 6 https://www.dropbox.com/s/bkw5mfp8r4mczsx/c3d-1.1.0-Linux-gcc64.tar.gz | tar zx -C /opt/c3d --strip-components=1
 
 # download reference atlases
 RUN curl -s -L --retry 6  https://www.dropbox.com/s/40xtlok0ns4bo7j/atlases_CITI.tar | tar x -C /src
