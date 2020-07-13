@@ -203,13 +203,6 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - build_sif:
-          requires:
-            - build
-          context: org-global
-          filters:
-            tags:
-              only: /.*/
       - test:
           requires:
             - build
@@ -217,14 +210,6 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - deploy_dev_cc:
-          requires:
-            - build_sif
-            - test
-          context: org-global
-          filters:
-            tags:
-              ignore: /^v.*/
       - deploy_dev:
           requires:
             - build
@@ -233,7 +218,6 @@ workflows:
           filters:
             tags:
               ignore: /^v.*/
-
       - deploy_release:
           requires:
             - build
@@ -244,15 +228,4 @@ workflows:
               only: /^v.*/
             branches:
               ignore: /.*/
-      - deploy_release_cc:
-          requires:
-            - build_sif
-            - test
-          context: org-global
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-
 
