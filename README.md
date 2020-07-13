@@ -22,10 +22,8 @@ The overall workflow can be summarized in the following steps:
 
 ### Installation
 
-The preferred method to run the code is through Docker or Singularity, using the container provided here:
-```
-docker://khanlab/hippocampal_autotop:latest
-```
+The preferred method to run the code is through Docker or Singularity, using the container provided on docker hub https://hub.docker.com/r/khanlab/hippocampal_autotop,  `docker://khanlab/hippocampal_autotop:latest`
+
 
 ### Usage
 
