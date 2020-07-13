@@ -22,10 +22,17 @@ The overall workflow can be summarized in the following steps:
 
 ### Installation
 
-Docker or Singularity container available on request (no public release available yet).
-
-Coming soon: fully containerized BIDSapp
+The preferred method to run the code is through Docker or Singularity, using the container provided here:
+docker://khanlab/hippocampal_autotop:latest
 
 ### Usage
 
 singleSubject \<input T2w image\> \<output directory\> \<OPTIONAL manual tissue segmentation\> \<OPTIONAL study-specific reference atlas for cropping around the hippocampi\>
+
+
+Running with Singularity:
+```
+singularity pull docker://khanlab/hippocampal_autotop:latest hippocampal_autotop_latest.sif
+singularity run --nv hippocampal_autotop_latest.sif /path/to/input_data/subj01_T2w.nii.gz /path/to/output_data/output_subj01
+```
+Note: With a 8-core, 32gb memory machine with a single Tesla T4 GPU (e.g. graham.computecanada.ca), processing for a single subject should take ~15 minutes.
