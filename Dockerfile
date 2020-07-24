@@ -1,4 +1,4 @@
-FROM khanlab/autotop_deps:latest
+FROM khanlab/autotop_deps:v0.1
 
 MAINTAINER jordandekraker@gmail.com
 
