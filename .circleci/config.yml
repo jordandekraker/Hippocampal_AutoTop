@@ -203,17 +203,9 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - test:
-          requires:
-            - build
-          context: org-global
-          filters:
-            tags:
-              only: /.*/
       - deploy_dev:
           requires:
             - build
-            - test
           context: org-global
           filters:
             tags:
@@ -221,7 +213,6 @@ workflows:
       - deploy_release:
           requires:
             - build
-            - test
           context: org-global
           filters:
             tags:
