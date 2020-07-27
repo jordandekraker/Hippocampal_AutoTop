@@ -22,9 +22,8 @@ The overall workflow can be summarized in the following steps:
 
 ### Installation
 
-Docker or Singularity container available on request (no public release available yet).
-
-Coming soon: fully containerized BIDSapp
+This release will be used for development. Check out the containerized release:
+https://github.com/khanlab/hippocampal_autotop
 
 ### Usage
 
