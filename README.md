@@ -20,19 +20,33 @@ The overall workflow can be summarized in the following steps:
 
 6) Application of subfield boundaries according to predifined topological coordinates
 
+
 ### Installation
 
 The preferred method to run the code is through Docker or Singularity, using the container provided on docker hub https://hub.docker.com/r/khanlab/hippocampal_autotop,  `docker://khanlab/hippocampal_autotop:latest`
 
+If you have your data in BIDS format, you can alternatively use the BIDS App wrapper at https://github.com/khanlab/hippocampal_autotop_bids, or on docker hub https://hub.docker.com/r/khanlab/hippocampal_autotop_bids.
 
 ### Usage
 
+Running in Matlab (with all dependencies installed - see http://hub.docker.com/r/khanlab/autotop_deps):
+```
 singleSubject \<input T2w image\> \<output directory\> \<OPTIONAL manual tissue segmentation\> \<OPTIONAL study-specific reference atlas for cropping around the hippocampi\>
-
+```
 
 Running with Singularity:
 ```
 singularity pull docker://khanlab/hippocampal_autotop:latest hippocampal_autotop_latest.sif
-singularity run --nv hippocampal_autotop_latest.sif /path/to/input_data/subj01_T2w.nii.gz /path/to/output_data/output_subj01
+singularity run --nv hippocampal_autotop_latest.sif /path/to/input_data/subj01_T2w.nii.gz /path/to/output_data/output_subj01  # can leave out the --nv if not using GPU
 ```
-Note: With a 8-core, 32gb memory machine with a single Tesla T4 GPU (e.g. graham.computecanada.ca), processing for a single subject should take ~15 minutes.
+
+#### Processing time for a single subject:
+
+With GPU: 15 minutes (8-core, 32gb memory, Tesla T4)
+Wihout GPU: ~30 minutes (8-core, 32gb memory) 
+
+Note: the same container has both GPU and CPU versions, will run using CPU if a GPU is not found.
+
+### BIDS App
+
+
