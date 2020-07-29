@@ -6,14 +6,15 @@ function Resample_Native(hippDir,outdir)
 %% load relevant data
 
 load([hippDir '/unfold.mat'])
-aff1 = ls([hippDir '/../sub2atlas.*']); % this is expected to be up one directory
-aff1(end) = [];
-aff2 = ls([hippDir '/../atlas2coronalOblique.*']); % this is expected to be up one directory
-aff2(end) = [];
+combined = ls([hippDir '/../sub2coronalOblique.txt']); % this is expected to be up one directory
+combined(end) = [];
+
 origimg = [hippDir '/../original.nii.gz'];
 
 if contains(hippDir,'hemi-R')
     LR = 'R';
+elseif contains(hippDir,'hemi-Lnoflip')
+    LR = 'Lnoflip';
 elseif contains(hippDir,'hemi-L')
     LR = 'L';
 else
@@ -32,19 +33,19 @@ for f = 1:length(imgList)
     img(end) = [];
     
     if LR == 'L'
+        unflip_dir = [hippDir '/../hemi-Lnoflip']
         i = load_untouch_nii(img);
         i.img = flip(i.img,1); % flip (only if right)
-        mkdir([hippDir '/tmp']); % just to ensure this exists
-        save_untouch_nii(i,[hippDir '/tmp/flipping.nii.gz']);
-        img = [hippDir '/tmp/flipping.nii.gz'];
+        mkdir(unflip_dir); % just to ensure this exists
+        img = [unflip_dir '/' imgList{f} '_hemi-L.nii.gz'];
+        save_untouch_nii(i,img);
     end
     
     system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
         '-i ' img ' '...
         '-o ' outdir '/' imgList{f} '_hemi-' LR '.nii.gz '...
         '-r ' origimg ' '...
-        '-t [' aff2 ',1] '...; % reverse the affine
-        '-t [' aff1 ',1]']); % reverse the affine
+        '-t [' combined ',1]']); % inverse of sub2coronalOblique 
 end
 
 %% apply to surfaces
@@ -66,53 +67,20 @@ end
 % if origheader.hdr.dime.pixdim(1) == -1 % prevent unintended file flips
 %     v(:,1) = sz(1)-v(:,1);
 % end
+
+
+%BUG? origheader could have zeros in sform - AK
 ras = [origheader.hdr.hist.srow_x;  origheader.hdr.hist.srow_y; origheader.hdr.hist.srow_z; 0 0 0 1];
 v = ras*[v'; ones(1,length(v))];
 
 
 % load transforms as matrices
-i = strfind(aff1,'.');
-suffix = aff1(i(end):end);
-if strcmp(suffix,'.mat')
-    affmat1 = load(aff1);
-    if isfield(affmat1,'AffineTransform_double_3_3') %ANTs generated
-        affmat1 = reshape(affmat1.AffineTransform_double_3_3,[3,4]);
-    elseif isfield(affmat1,'MatrixOffsetTransformBase_double_3_3') %FLIRT + fsl2ras -oitk generated
-        affmat1 = reshape(affmat1.MatrixOffsetTransformBase_double_3_3,[3,4]);
-    else
-        error(['Could not interpret ' aff1]);
-    end
-    affmat1(4,1:4) = [0,0,0,1];
-elseif strcmp(suffix,'.txt')
-    affmat1 = import_txtAffine(aff1);
-else
-    error('Could not load transformation to native space');
-end
-
-i = strfind(aff2,'.');
-suffix = aff2(i(end):end);
-if strcmp(suffix,'.mat')
-    affmat2 = load(aff2);
-    if isfield(affmat2,'AffineTransform_double_3_3') %ANTs generated
-        affmat2 = reshape(affmat2.AffineTransform_double_3_3,[3,4]);
-    elseif isfield(affmat2,'MatrixOffsetTransformBase_double_3_3') %FLIRT + fsl2ras -oitk generated
-        affmat2 = reshape(affmat2.MatrixOffsetTransformBase_double_3_3,[3,4]);
-    else
-        error(['Could not interpret ' aff2]);
-    end
-    affmat2(4,1:4) = [0,0,0,1];
-elseif strcmp(suffix,'.txt')
-    affmat2 = import_txtAffine(aff2);
-else
-    error('Could not load transformation back to native space');
-end
+combinedmat = import_txtAffine(combined);
 
 % invert transforms
-affmat1 = itransf.*affmat1;
-affmat2 = itransf.*affmat2;
+combinedmat = itransf.*combinedmat;
 % apply transforms
-v = affmat2*v;
-v = affmat1*v;
+v = combinedmat*v;
 Vnative = v';
 
 % Write file

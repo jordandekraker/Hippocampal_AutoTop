@@ -72,6 +72,18 @@ aff2 = [outdir '/atlas2coronalOblique' suffix];
 %     system(['rm ' outdir '/0GenericAffine.mat']);
 % end
 
+%% create combined transformation - use txt file for easier inspection..
+combined = [outdir '/sub2coronalOblique.txt']
+
+system(['antsApplyTransforms -d 3 '...
+        '-i ' inimg ' '...
+        '-o Linear[' combined '] '...
+        '-r ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/img_300umCoronalOblique_hemi-L.nii.gz '... #the transform is the same regardless of whether Lcrop and Rcrop
+        '-t ' aff2 ' '...
+        '-t ' aff1]);
+
+
+
 %% apply to imgs
 mkdir([outdir '/hemi-L/']);
 out = [outdir '/hemi-L/img.nii.gz'];
@@ -80,8 +92,7 @@ out = [outdir '/hemi-L/img.nii.gz'];
         '-i ' inimg ' '...
         '-o ' out ' '...
         '-r ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/img_300umCoronalOblique_hemi-L.nii.gz '...
-        '-t ' aff2 ' '...
-        '-t ' aff1]);
+        '-t ' combined]);
     [~,z] = system(['fslstats ' out ' -s']);
     if str2num(z)==0
         warning('Hemi-L not found in cropped image');
@@ -94,6 +105,25 @@ out = [outdir '/hemi-L/img.nii.gz'];
         save_untouch_nii(i,out);
     end
 % end
+
+mkdir([outdir '/hemi-Lnoflip/']);
+out = [outdir '/hemi-Lnoflip/img.nii.gz'];
+% if ~exist(out)
+    disp(['antsApplyTransforms -d 3 --interpolation Linear '...
+        '-i ' inimg ' '...
+        '-o ' out ' '...
+        '-r ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/img_300umCoronalOblique_hemi-L.nii.gz '...
+        '-t ' combined]);
+    [~,z] = system(['fslstats ' out ' -s']);
+    if str2num(z)==0
+        warning('Hemi-Lnoflip not found in cropped image');
+        try
+        system(['rm ' out]); % remove if failed
+        end
+    end
+% end
+
+
 mkdir([outdir '/hemi-R/']);
 out = [outdir '/hemi-R/img.nii.gz'];
 % if ~exist(out)
@@ -101,8 +131,7 @@ out = [outdir '/hemi-R/img.nii.gz'];
         '-i ' inimg ' '...
         '-o ' out ' '...
         '-r ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/img_300umCoronalOblique_hemi-R.nii.gz '...
-        '-t ' aff2 ' '...
-        '-t ' aff1]);
+        '-t ' combined]);
     [~,z] = system(['fslstats ' out ' -s']);
     if str2num(z)==0
         warning('Hemi-R not found in cropped image');
@@ -134,8 +163,7 @@ end
                 '-i ' inlbl ' '...
                 '-o ' out ' '...
                 '-r ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/img_300umCoronalOblique_hemi-L.nii.gz '...
-                '-t ' aff2 ' '...
-                '-t ' aff1]);
+                '-t ' combined]);
             [~,z] = system(['fslstats ' out ' -s']);
             if str2num(z)==0
                 warning('Hemi-L not found in cropped image');
@@ -148,14 +176,30 @@ end
                 save_untouch_nii(i,out);
             end
 %         end
+
+        out = [outdir '/hemi-Lnoflip/lbl.nii.gz'];
+%         if ~exist(out)
+            system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
+                '-i ' inlbl ' '...
+                '-o ' out ' '...
+                '-r ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/img_300umCoronalOblique_hemi-L.nii.gz '...
+                '-t ' combined]);
+            [~,z] = system(['fslstats ' out ' -s']);
+            if str2num(z)==0
+                warning('Hemi-Lnoflip not found in cropped image');
+                try
+                system(['rm ' out]);
+                end
+            end
+%         end
+
         out = [outdir '/hemi-R/lbl.nii.gz'];
 %         if ~exist(out)
             system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
                 '-i ' inlbl ' '...
                 '-o ' out ' '...
                 '-r ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/img_300umCoronalOblique_hemi-R.nii.gz '...
-                '-t ' aff2 ' '...
-                '-t ' aff1]);
+                '-t ' combined]);
             [~,z] = system(['fslstats ' out ' -s']);
             if str2num(z)==0
                 warning('Hemi-R not found in cropped image');
