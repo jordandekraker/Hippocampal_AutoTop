@@ -46,7 +46,3 @@ With GPU: 15 minutes (8-core, 32gb memory, Tesla T4)
 Wihout GPU: ~30 minutes (8-core, 32gb memory) 
 
 Note: the same container has both GPU and CPU versions, will run using CPU if a GPU is not found.
-
-### BIDS App
-
-
