@@ -37,7 +37,7 @@ for f = 1:length(imgList)
         i = load_untouch_nii(img);
         i.img = flip(i.img,1); % flip (only if right)
         mkdir(unflip_dir); % just to ensure this exists
-        img = [unflip_dir '/' imgList{f} '_hemi-L.nii.gz'];
+        img = [unflip_dir '/' imgList{f} '.nii.gz'];
         save_untouch_nii(i,img);
     end
     
