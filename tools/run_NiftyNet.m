@@ -62,9 +62,8 @@ fprintf(fid,[outname ',' img]);
 fclose(fid);
 
 %% now run through the network
-
-t = system(['net_segment '...
-    '-c ' tmpdir '/CNNinference_config.ini inference']);
+disp(['net_segment -c ' tmpdir '/CNNinference_config.ini inference']);
+t = system(['net_segment -c ' tmpdir '/CNNinference_config.ini inference']);
 if t~=0
     error('Could not run NiftyNet');
 end
