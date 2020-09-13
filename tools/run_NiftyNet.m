@@ -65,7 +65,13 @@ fclose(fid);
 disp(['net_segment -c ' tmpdir '/CNNinference_config.ini inference']);
 t = system(['net_segment -c ' tmpdir '/CNNinference_config.ini inference']);
 if t~=0
-    error('Could not run NiftyNet');
+    warning('Could not find NiftyNet, checking for local container');
+    tt = system(['singularity exec '...
+    '--nv ' getenv('AUTOTOP_DIR') '/containers/deeplearning_gpu.simg net_segment '...
+    '-c ' tmpdir '/CNNinference_config.ini inference']);
+    if tt~=0
+        error('Could not run NiftyNet on local container');
+    end
 end
 
 % niftynet output filename seems to have changed in niftynet 0.6.0 (req'd for singularity build)
