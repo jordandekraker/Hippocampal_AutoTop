@@ -1,4 +1,4 @@
-function figurehandle = plot_foldunfold(img,FV,smooth,plt_title)
+function plot_foldunfold(img,FV,smooth,plt_title)
 
 % plots unfolded features or labels in unfolded and native space (with
 % smoothing, windowing, and outlier removal)

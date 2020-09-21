@@ -1,8 +1,8 @@
 function plot_foldunfold_nii(imgName,hippSpaceDir)
 
-% resamples an image to 
-%hippSpaceDir = '~/graham/sub-100610/hemi-L';
-%imgName = '~/graham/scratch/data.nii.gz';
+% resamples an image to CoronalOblique and then plots its intensities on a
+% folded and unfolded midsurface. If the image is 4D, then it splits the
+% input first.
 
 %% load data
 
