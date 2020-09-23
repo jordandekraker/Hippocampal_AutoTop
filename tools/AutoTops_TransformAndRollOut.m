@@ -1,4 +1,4 @@
-function AutoTops_TransformAndRollOut(inimg,outdir,inlbl)
+function AutoTops_TransformAndRollOut(inimg,outdir,inlbl,CNNmodel)
 % 
 % Segments and unfolds a 3D hippocampal image. Should always be run from
 % Hippocampal_AutoTop directory, and input image should be a cropped
@@ -20,11 +20,18 @@ inimg = ls([outdir '/img.nii.gz']); inimg(end) = [];
 
 %%
 % check if labelmap exists and if not, apply highres3dnet (via NiftyNet)
-if exist('inlbl','var')
+if ~exist('CNNmodel','var')
+    CNNmodel = 'highres3dnet_large_v0.4';
+end
+if ~exist('inlbl','var')
+    inlbl = [];
+end
+
+if ~isempty(inlbl)
     system(['cp ' inlbl ' ' outdir '/manual_lbl.nii.gz']);
     inlbl = [outdir '/manual_lbl.nii.gz'];
 else
-    run_NiftyNet(inimg,outdir); % automatically segment
+    run_NiftyNet(inimg,outdir,CNNmodel); % automatically segment
     inlbl = [outdir '/niftynet_lbl.nii.gz'];
 end
 

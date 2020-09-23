@@ -1,3 +1,4 @@
 containers/
 atlases_dep/
-example/HCP_100610_hemi-L/data_resampled_hemiL.nii.gz
+example/
+test/

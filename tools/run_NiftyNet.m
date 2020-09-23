@@ -1,9 +1,13 @@
-function run_NiftyNet(img,outdir)
+function run_NiftyNet(img,outdir,CNNmodel)
 
 % runs niftynet inference on a single image. Edit this file to specify a
 % new config file.
 
 % don't overwrite existing files
+if ~exist('CNNmodel','var')
+    CNNmodel = 'highres3dnet_large_v0.4';
+end
+
 if ~exist([outdir '/niftynet_lbl.nii.gz'],'file')
 
 tmpdir = [outdir '/tmp/'];
@@ -13,11 +17,11 @@ tmp = dir(tmpdir);
 tmpdir = tmp.folder;
 
 %copy model to local folder since niftynet requires write access to folder (i.e. cannot be in the container)
-cp_cmd = ['cp -Rv ' getenv('AUTOTOP_DIR') '/' 'CNNmodels/highres3dnet_large_v0.4 '  tmpdir];
+cp_cmd = ['cp -Rv ' getenv('AUTOTOP_DIR') '/CNNmodels/' CNNmodel ' ' tmpdir];
 system(cp_cmd);
 
 % get config and model dir
-configfile = [tmpdir '/highres3dnet_large_v0.4/config.ini'];
+configfile = [tmpdir '/' CNNmodel '/config.ini'];
 tmp = dir(configfile);
 modeldir = tmp.folder;
 % get output name without dir or extension

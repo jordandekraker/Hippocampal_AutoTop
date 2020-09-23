@@ -37,11 +37,17 @@ else
     aff1 = [outdir '/itk_affine.mat'];
     if ~exist(aff1,'file') && ~exist([outdir '/sub2atlas.mat'],'file')
         %system(['bash tools/ANTsTools/runAntsImgs_Aff.sh ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/orig_T2w.nii.gz ' inimg ' ' outdir]);
-        system(['flirt -ref ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/orig_T2w.nii.gz -in ' inimg ' -omat ' outdir '/flirt_affine.mat']);
-        system(['c3d_affine_tool ' outdir '/flirt_affine.mat '...
+        s1 = system(['flirt -ref ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/orig_T2w.nii.gz -in ' inimg ' -omat ' outdir '/flirt_affine.mat']);
+        if s1 ~= 0 
+            error('FLIRT registration to atlas failed');
+        end
+        s2 = system(['c3d_affine_tool ' outdir '/flirt_affine.mat '...
             '-src  ' inimg ' '...
             '-ref  ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/orig_T2w.nii.gz '...
             '-fsl2ras -oitk ' outdir 'itk_affine.mat']);
+        if s2 ~= 0 
+            error('c3d_affine_tool failed');
+        end
     end
 end
 % aff1 = [getenv('AUTOTOP_DIR') '/misc/identity_affine.txt']; % dont rerun if already in one of these spaces
