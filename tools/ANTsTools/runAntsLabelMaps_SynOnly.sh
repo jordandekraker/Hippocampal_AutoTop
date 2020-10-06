@@ -11,10 +11,11 @@ then
 	 echo ""
 	 echo " -r cc_radius (default 3)"
 	 echo " -s SyN_stepsize (default 0.25)"
-	 echo " -u SyN_updatefieldsigma (fluid deformation) (default 3)"
+	 echo " -u SyN_updatefieldsigma (fluid deformation)"
 	 echo " -t SyN_totalfieldsigma (elastic deformation) (default 0)"
 	 echo " -L \"label1 label2 ...\" (labels to extract, default 1)"
 	 echo " -W \"weight1 weight2 ...\" (weights for each, default 1)"
+	 echo " Note: if specifying multiple labels, you must specify weights"
 	 echo ""
 
 	 exit 1
@@ -22,12 +23,12 @@ then
 
  shift 4
 
-convergence="[50x100x200,1e-7,10]"
-shrink_factors="2x1x1"
-smoothing_sigmas="2x1x0.25vox" # cannot exceed 8vox (hard-coded limit in ANTS)
+convergence="[500x250x100,1e-6,50]"
+shrink_factors="4x2x1"
+smoothing_sigmas="4x2x1vox" # cannot exceed 8vox (hard-coded limit in ANTS)
 radiusnbins=3
-stepsize=0.25 
-updatefield=15 # fluid deformation. 10 is quite high fluidity
+stepsize=0.1 
+updatefield=5 # fluid deformation (default 3)
 totalfield=0 # elastic deformation
 labellist=1
 weightlist=1
