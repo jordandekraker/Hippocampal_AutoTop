@@ -50,7 +50,6 @@ else
         end
     end
 end
-% aff1 = [getenv('AUTOTOP_DIR') '/misc/identity_affine.txt']; % dont rerun if already in one of these spaces
 aff2 = [getenv('AUTOTOP_DIR') '/atlases/' atlas '/CoronalOblique_rigid.txt'];
 
 %% keep a copy of each affine
@@ -79,8 +78,7 @@ aff2 = [outdir '/atlas2coronalOblique' suffix];
 % end
 
 %% create combined transformation - use txt file for easier inspection..
-combined = [outdir '/sub2coronalOblique.txt']
-
+combined = [outdir '/sub2coronalOblique.txt'];
 system(['antsApplyTransforms -d 3 '...
         '-i ' inimg ' '...
         '-o Linear[' combined '] '...
@@ -88,20 +86,21 @@ system(['antsApplyTransforms -d 3 '...
         '-t ' aff2 ' '...
         '-t ' aff1]);
 
-
-
 %% apply to imgs
 mkdir([outdir '/hemi-L/']);
 out = [outdir '/hemi-L/img.nii.gz'];
+emptyimgs = [0 0];
 % if ~exist(out)
     system(['antsApplyTransforms -d 3 --interpolation Linear '...
         '-i ' inimg ' '...
         '-o ' out ' '...
         '-r ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/img_300umCoronalOblique_hemi-L.nii.gz '...
         '-t ' combined]);
+    %check that the image is not empty
     [~,z] = system(['fslstats ' out ' -s']);
     if str2num(z)==0
         warning('Hemi-L not found in cropped image');
+        emptyimgs(1) = 1;
         try
         system(['rm ' out]); % remove if failed
         end
@@ -141,11 +140,15 @@ out = [outdir '/hemi-R/img.nii.gz'];
     [~,z] = system(['fslstats ' out ' -s']);
     if str2num(z)==0
         warning('Hemi-R not found in cropped image');
+        emptyimgs(2) = 1;
         try
         system(['rm ' out]); % remove if failed
         end
     end
 % end
+if all(emptyimgs)
+    error('FLIRT registration to CITI atlas failed. Please manually register to CITI (or another supported atlas) and then try again');
+end
 
 %% (optional) apply to additional images (usually masks)
 
