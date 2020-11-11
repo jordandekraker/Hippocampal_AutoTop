@@ -69,10 +69,22 @@ end
 % end
 
 
-%BUG? origheader could have zeros in sform - AK
-ras = [origheader.hdr.hist.srow_x;  origheader.hdr.hist.srow_y; origheader.hdr.hist.srow_z; 0 0 0 1];
-v = ras*[v'; ones(1,length(v))];
-
+% apply qform or sform
+if origheader.hdr.hist.sform_code>0
+    sform = [origheader.hdr.hist.srow_x;...
+        origheader.hdr.hist.srow_y;...
+        origheader.hdr.hist.srow_z;...
+        0 0 0 1];
+    v = sform*[v'; ones(1,length(v))];
+elseif origheader.hdr.hist.qform_code>0
+    qform = [origheader.hdr.dime.pixdim(2) 0 0 origheader.hdr.hist.qoffset_x;...
+            0 origheader.hdr.dime.pixdim(3) 0 origheader.hdr.hist.qoffset_y;...
+            0 0 origheader.hdr.dime.pixdim(4)  origheader.hdr.hist.qoffset_z;...
+            0 0 0 1];
+    v = qform*[v'; ones(1,length(v))];
+else
+    warning('could not read nifti qform or sform for transforming .vtk midsurface');
+end
 
 % load transforms as matrices
 combinedmat = import_txtAffine(combined);
