@@ -143,7 +143,8 @@ if origheader.hdr.hist.sform_code>0
         0 0 0 1];
     v = sform*[v'; ones(1,length(v))];
 elseif origheader.hdr.hist.qform_code>0
-    qform = [origheader.hdr.dime.pixdim(2) 0 0 origheader.hdr.hist.qoffset_x;...
+    %TODO: why the negative on the first entry??
+    qform = [-origheader.hdr.dime.pixdim(2) 0 0 origheader.hdr.hist.qoffset_x;...
             0 origheader.hdr.dime.pixdim(3) 0 origheader.hdr.hist.qoffset_y;...
             0 0 origheader.hdr.dime.pixdim(4)  origheader.hdr.hist.qoffset_z;...
             0 0 0 1];
@@ -151,6 +152,7 @@ elseif origheader.hdr.hist.qform_code>0
 else
     warning('could not read nifti qform or sform for transforming .vtk midsurface');
 end
+v = v';
 vtkwrite([outprefix 'midSurf.vtk'],'polydata','triangle',v(:,1),v(:,2),v(:,3),F);
 
 %% clean up and save
