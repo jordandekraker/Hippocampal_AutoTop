@@ -134,11 +134,23 @@ catch
 end
 
 %% write Vmid .vtk file
-
 v = reshape(Vmid,[APres*PDres,3]);
-v(:,1) = v(:,1).*origheader.hdr.dime.pixdim(2) + origheader.hdr.hist.srow_x(end);
-v(:,2) = v(:,2).*origheader.hdr.dime.pixdim(3) + origheader.hdr.hist.srow_y(end);
-v(:,3) = v(:,3).*origheader.hdr.dime.pixdim(4) + origheader.hdr.hist.srow_z(end);
+% apply qform or sform from cropped nifti header
+if origheader.hdr.hist.sform_code>0
+    sform = [origheader.hdr.hist.srow_x;...
+        origheader.hdr.hist.srow_y;...
+        origheader.hdr.hist.srow_z;...
+        0 0 0 1];
+    v = sform*[v'; ones(1,length(v))];
+elseif origheader.hdr.hist.qform_code>0
+    qform = [origheader.hdr.dime.pixdim(2) 0 0 origheader.hdr.hist.qoffset_x;...
+            0 origheader.hdr.dime.pixdim(3) 0 origheader.hdr.hist.qoffset_y;...
+            0 0 origheader.hdr.dime.pixdim(4)  origheader.hdr.hist.qoffset_z;...
+            0 0 0 1];
+    v = qform*[v'; ones(1,length(v))];
+else
+    warning('could not read nifti qform or sform for transforming .vtk midsurface');
+end
 vtkwrite([outprefix 'midSurf.vtk'],'polydata','triangle',v(:,1),v(:,2),v(:,3),F);
 
 %% clean up and save
