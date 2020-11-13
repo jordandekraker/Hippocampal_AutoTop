@@ -34,7 +34,7 @@ Vuvw = [u(:),v(:),w(:)];
 
 %% interpolate between unfolded and native space
 
-interp='linear';
+interp='natural';
 extrap='nearest';
 scattInterp=scatteredInterpolant(Laplace_AP,Laplace_PD,Laplace_IO,i_L,interp,extrap);
 x = scattInterp(Vuvw(:,1),Vuvw(:,2),Vuvw(:,3));
