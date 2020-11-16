@@ -5,4 +5,5 @@ addpath(genpath('tools'));
 
 %mcr_v97 for R2019b
 mkdir('mcr_v97')
+mcc -m -d mcr_v97 AutoTops_TransformAndRollOut.m
 mcc -m -d mcr_v97 singleSubject.m
