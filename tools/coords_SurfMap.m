@@ -59,12 +59,14 @@ F(isnan(F)) = [];
 F=reshape(F,[3,(APres-1)*(PDres-1)*2])';
 
 % get midpoint vertices
-Vmid = reshape(Vxyz,[APres,PDres,IOres,3]);
-Vmid = squeeze(Vmid(:,:,ceil(IOres/2),:));
+Vxyz = reshape(Vxyz,[APres,PDres,IOres,3]);
+Vmid = squeeze(Vxyz(:,:,ceil(IOres/2),:));
 % smooth using Cosine Representation
 % Vrec = CosineRep_2Dsurf(Vmid,64,0.005); 
 % t = ~ismember(round(Vrec),[i_L,j_L,k_L]);
 % Vrec(t) = nan;
+Vinner = squeeze(Vxyz(:,:,1,:));
+Vouter = squeeze(Vxyz(:,:,IOres,:));
 
 
 %% Gyrification Index
@@ -133,32 +135,44 @@ catch
     warning('No MRI image found. Skipping quantitative sampling');
 end
 
-%% write Vmid .vtk file
-v = reshape(Vmid,[APres*PDres,3]);
+%% write Vmid .vtk file (and Vinner and Vouter)
+vmid = reshape(Vmid,[APres*PDres,3]);
+vinner = reshape(Vinner,[APres*PDres,3]);
+vouter = reshape(Vouter,[APres*PDres,3]);
 % apply qform or sform from cropped nifti header
 if origheader.hdr.hist.sform_code>0
     sform = [origheader.hdr.hist.srow_x;...
         origheader.hdr.hist.srow_y;...
         origheader.hdr.hist.srow_z;...
         0 0 0 1];
-    v = sform*[v'; ones(1,length(v))];
+    vmid = sform*[vmid'; ones(1,length(v))];
+    vinner = sform*[vinner'; ones(1,length(v))];
+    vouter = sform*[vouter'; ones(1,length(v))];
 elseif origheader.hdr.hist.qform_code>0
     %TODO: why the negative on the first entry??
     qform = [-origheader.hdr.dime.pixdim(2) 0 0 origheader.hdr.hist.qoffset_x;...
             0 origheader.hdr.dime.pixdim(3) 0 origheader.hdr.hist.qoffset_y;...
             0 0 origheader.hdr.dime.pixdim(4)  origheader.hdr.hist.qoffset_z;...
             0 0 0 1];
-    v = qform*[v'; ones(1,length(v))];
+    vmid = qform*[vmid'; ones(1,length(v))];
+    vinner = qform*[vinner'; ones(1,length(v))];
+    vouter = qform*[vouter'; ones(1,length(v))];
 else
     warning('could not read nifti qform or sform for transforming .vtk midsurface');
 end
-v = v';
-vtkwrite([outprefix 'midSurf.vtk'],'polydata','triangle',v(:,1),v(:,2),v(:,3),F);
+vmid = vmid';
+vinner = vinner';
+vouter = vouter';
+% NOTE: still not sure where this off-by-1 problem is originiating from, so here is a temporary fix:
+% TODO: find the real source of this problem!
+vtkwrite([outprefix 'midSurf.vtk'],'polydata','triangle',vmid(:,1)+1,vmid(:,2)-1,vmid(:,3)-1,F);
+vtkwrite([outprefix 'innerSurf.vtk'],'polydata','triangle',vinner(:,1)+1,vinner(:,2)-1,vinner(:,3)-1,F);
+vtkwrite([outprefix 'midSurf.vtk'],'polydata','triangle',vouter(:,1)+1,vouter(:,2)-1,vouter(:,3)-1,F);
 
 %% clean up and save
 
 clearvars x y z u v w t i_L j_L k_L  i ii extrap interp
-clearvars -except outprefix APres PDres IOres Vxyz Vuvw Vmid Vrec F...
+clearvars -except outprefix APres PDres IOres Vxyz Vuvw Vmid Vinner Vouter Vrec F...
     idxgm img lbl sz GI streamlengths qMap
 save([outprefix 'surf.mat']);
 end
