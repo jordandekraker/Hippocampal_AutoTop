@@ -4,10 +4,7 @@ autotop_dir = getenv('AUTOTOP_DIR');
 if isempty(autotop_dir)
     error('you must set the AUTOTOP_DIR environment variable before running');
 end
-try addpath(genpath([autotop_dir '/tools'])); endif isempty(autotop_dir)
-    error('you must set the AUTOTOP_DIR environment variable before running');
-end
-try addpath(genpath([autotop_dir '/tools'])); end
+addpath(genpath([autotop_dir '/tools']));
 
 mkdir(outdir);
 outdir = [outdir '/']; % make sure this is a directory
