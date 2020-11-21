@@ -69,15 +69,10 @@ i=0
 
 
 for label in $labellist
-
 do
-weight=${weightlist[$i]}
-	echo label: $label
-	echo weight: $weight
-	template_bin=$out_dir/template_label-$label.nii.gz
-	target_bin=$out_dir/target_label-$label.nii.gz
 
-
+template_bin=$out_dir/template_label-$label.nii.gz
+target_bin=$out_dir/target_label-$label.nii.gz
 
 if [ ! -e $template_bin ]
 then
@@ -90,6 +85,19 @@ then
 echo fslmaths $in_target_nii -thr $label -uthr $label -bin $target_bin
 fslmaths $in_target_nii -thr $label -uthr $label -bin $target_bin
 fi
+
+weight=${weightlist[$i]}
+
+# ignore missing labels (empty bin)
+s1=$(fslstats $template_bin -s)
+s2=$(fslstats $target_bin -s)
+if [ $s1 == 0 ] | [ $s2 == 0 ]
+then
+weight=0
+fi
+
+echo label: $label
+echo weight: $weight
 
 #template is fixed
 #target is moving

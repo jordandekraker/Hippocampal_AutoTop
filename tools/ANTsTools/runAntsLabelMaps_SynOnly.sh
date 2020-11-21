@@ -23,9 +23,9 @@ then
 
  shift 4
 
-convergence="[500x250x100,1e-6,50]"
+convergence="[500x500x250,1e-6,50]"
 shrink_factors="4x2x1"
-smoothing_sigmas="4x2x1vox" # cannot exceed 8vox (hard-coded limit in ANTS)
+smoothing_sigmas="8x4x2vox" # cannot exceed 8vox (hard-coded limit in ANTS)
 radiusnbins=3
 stepsize=0.1 
 updatefield=5 # fluid deformation (default 3)
@@ -62,15 +62,10 @@ mkdir -p $out_dir
 metric=""
 i=0
 for label in $labellist
-
 do
-weight=${weightlist[$i]}
-	echo label: $label
-	echo weight: $weight
-	template_bin=$out_dir/template_label-$label.nii.gz
-	target_bin=$out_dir/target_label-$label.nii.gz
 
-
+template_bin=$out_dir/template_label-$label.nii.gz
+target_bin=$out_dir/target_label-$label.nii.gz
 
 if [ ! -e $template_bin ]
 then
@@ -83,6 +78,21 @@ then
 echo fslmaths $in_target_nii -thr $label -uthr $label -bin $target_bin
 fslmaths $in_target_nii -thr $label -uthr $label -bin $target_bin
 fi
+
+weight=${weightlist[$i]}
+
+# ignore missing labels (empty bin)
+s1=$(fslstats $template_bin -s)
+s2=$(fslstats $target_bin -s)
+if [ $s1 == 0 ] | [ $s2 == 0 ]
+then
+weight=0
+fi
+
+echo label: $label
+echo weight: $weight
+
+
 
 #template is fixed
 #target is moving
