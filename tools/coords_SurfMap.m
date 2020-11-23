@@ -140,7 +140,7 @@ for io = 1:IOres
     
     % NOTE: still not sure where this off-by-1 problem is originiating from, so here is a temporary fix:
     % TODO: find the real source of this problem!
-    v = reshape(v,[APres*PDres,3]) + [1 -1 -1];
+    v = reshape(v,[APres*PDres,3]) + [-1 -1 -1];
     
     % apply qform or sform from cropped nifti header
     if origheader.hdr.hist.sform_code>0
