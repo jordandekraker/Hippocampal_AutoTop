@@ -44,6 +44,9 @@ labelmap_LaplaceCoords(outdir)
 % extract hippocampal midsurface and features
 coords_SurfMap(outdir);
 
+%gifti outputs
+coords_SurfMapGifti(outdir);
+
 % plot for Quality Assurance
 %plot_manualQA(outdir);
 
