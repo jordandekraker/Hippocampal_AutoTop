@@ -1,23 +1,19 @@
-function create_warps(in_coord_ap_nii,in_coord_pd_nii,in_coord_io_nii, ...
-                        out_native2unfold_nii, out_unfold2native_nii, ...
-                        n_steps_unfold, affine_unfold)
+function create_warps(in_folder, out_folder, n_steps_unfold, affine_unfold)
     arguments
-        in_coord_ap_nii string 
-        in_coord_pd_nii string
-        in_coord_io_nii string
-        out_native2unfold_nii string
-        out_unfold2native_nii string
+        in_folder string
+        out_folder string
         n_steps_unfold  (1,3) double = [256, 128, 16]
         affine_unfold (4,4) double = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1]
     end
-%          
-%     in_coord_ap_nii='coords-AP.nii.gz'
-%     in_coord_pd_nii='coords-PD.nii.gz'
-%     in_coord_io_nii='coords-IO.nii.gz'
+% - test params:       
 %     n_steps_unfold = [256, 128, 16]
 %     affine_unfold = eye(4,4) %to define space of coords
-%     out_native2unfold_nii='Warp_native2unfold.nii'
-%     out_unfold2native_nii='Warp_unfold2native.nii'
+
+     in_coord_ap_nii=sprintf('%s/coords-AP.nii.gz',in_folder);
+     in_coord_pd_nii=sprintf('%s/coords-PD.nii.gz',in_folder);
+     in_coord_io_nii=sprintf('%s/coords-IO.nii.gz',in_folder);
+     out_native2unfold_nii=sprintf('%s/Warp_native2unfold.nii',out_folder);
+     out_unfold2native_nii=sprintf('%s/Warp_unfold2native.nii',out_folder);
 
 
     native_info = niftiinfo(in_coord_ap_nii);
