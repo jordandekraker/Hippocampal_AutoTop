@@ -85,7 +85,6 @@ for surf_i = 1:length(surf_names)
     io_ind = io_inds(surf_i);
     surf_name = surf_names{surf_i};
     
-    basename = sprintf('%s/%s_%dx%d',out_folder,surf_name,n_steps_unfold_crop(1),n_steps_unfold_crop(2));
     
     %get surface
     unfold_midsurf_phys_img = squeeze(unfold_coords_phys_img(2:(end-1),2:(end-1),io_ind,:));
@@ -99,7 +98,7 @@ for surf_i = 1:length(surf_names)
     g.mat = eye(4,4);
     g.vertices = single(unfold_midsurf_phys_vec);
     
-    gii_unfold = sprintf('%s.unfolded.surf.gii',basename);
+    gii_unfold = sprintf('%s/%s.unfolded.surf.gii',out_folder,surf_name);
     save(g,gii_unfold,'Base64Binary');
     
     
