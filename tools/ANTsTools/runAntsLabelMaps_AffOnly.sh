@@ -66,15 +66,18 @@ echo fslmaths $in_target_nii -thr $label -uthr $label -bin $target_bin
 fslmaths $in_target_nii -thr $label -uthr $label -bin $target_bin
 fi
 
-weight=${weightlist[$i]}
+# ignore missing labels (empty bin, i.e., no non-zero voxels)
+v1=$(fslstats $template_bin -V) ; v1=(${v1// / })
+v2=$(fslstats $target_bin -V) ; v2=(${v2// / })
 
-# ignore missing labels (empty bin)
-s1=$(fslstats $template_bin -s)
-s2=$(fslstats $target_bin -s)
-if [ $s1 == 0 ] | [ $s2 == 0 ]
+if [ "$v1" == "0" ] || [ "$v2" == "0" ] ;
 then
-weight=0
-fi
+
+echo "skipping label $label"
+
+else
+
+weight=${weightlist[$i]}
 
 echo label: $label
 echo weight: $weight
@@ -83,6 +86,7 @@ echo weight: $weight
 #target is moving
 metric="$metric --metric ${cost}[${template_bin},${target_bin},${weight},${radiusnbins}]"
 
+fi
 i=$((i+1))
 done
 

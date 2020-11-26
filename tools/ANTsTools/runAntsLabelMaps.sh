@@ -80,7 +80,6 @@ echo fslmaths $in_target_nii -thr $label -uthr $label -bin $target_bin
 fslmaths $in_target_nii -thr $label -uthr $label -bin $target_bin
 fi
 
-weight=${weightlist[$i]}
 
 # ignore missing labels (empty bin, i.e., no non-zero voxels)
 v1=$(fslstats $template_bin -V) ; v1=(${v1// / })

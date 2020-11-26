@@ -61,8 +61,6 @@ done
 weightlist=($weightlist) # must be made indexable
 mkdir -p $out_dir
 
-
-
 metric=""
 metric="$metric --metric ${cost}[${in_template_img},${in_target_img},1,${radiusnbins}]"
 i=0
@@ -86,24 +84,25 @@ echo fslmaths $in_target_nii -thr $label -uthr $label -bin $target_bin
 fslmaths $in_target_nii -thr $label -uthr $label -bin $target_bin
 fi
 
-weight=${weightlist[$i]}
 
-# ignore missing labels (empty bin)
-s1=$(fslstats $template_bin -s)
-s2=$(fslstats $target_bin -s)
-if [ $s1 == 0 ] | [ $s2 == 0 ]
+# ignore missing labels (empty bin, i.e., no non-zero voxels)
+v1=$(fslstats $template_bin -V) ; v1=(${v1// / })
+v2=$(fslstats $target_bin -V) ; v2=(${v2// / })
+
+if [ "$v1" == "0" ] || [ "$v2" == "0" ] ;
 then
-weight=0
-fi
+
+echo "skipping label $label"
+
+else
+
+weight=${weightlist[$i]}
 
 echo label: $label
 echo weight: $weight
-
-#template is fixed
-#target is moving
-metric=""
 metric="$metric --metric ${cost}[${template_bin},${target_bin},${weight},${radiusnbins}]"
 
+fi
 i=$((i+1))
 done
 
