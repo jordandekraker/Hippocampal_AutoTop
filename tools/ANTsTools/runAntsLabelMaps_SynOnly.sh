@@ -79,23 +79,25 @@ echo fslmaths $in_target_nii -thr $label -uthr $label -bin $target_bin
 fslmaths $in_target_nii -thr $label -uthr $label -bin $target_bin
 fi
 
+weight=${weightlist[$i]}
+
 # ignore missing labels (empty bin)
 s1=$(fslstats $template_bin -s)
 s2=$(fslstats $target_bin -s)
-if (( $(echo "$s1 > 0.001" | bc -l) )) && (( $(echo "$s2 > 0.001" | bc -l) ))
+if [ $s1 == 0 ] | [ $s2 == 0 ]
 then
-
-weight=${weightlist[$i]}
+weight=0
+fi
 
 echo label: $label
 echo weight: $weight
 
+
+
+#template is fixed
+#target is moving
 metric="$metric --metric ${cost}[${template_bin},${target_bin},${weight},${radiusnbins}]"
 
-else
-echo "skipping label $label"
-
-fi
 i=$((i+1))
 done
 
