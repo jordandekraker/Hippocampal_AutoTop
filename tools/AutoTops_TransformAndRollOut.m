@@ -51,7 +51,7 @@ create_warps(outdir,outdir); %args are in_dir, out_dir
 % but just generated here for convenience) - 
 %  also, if you use custom n_steps_unfold or affine_unfold for create_warps, 
 %  then you must use the same parameters for create_template_unfold_gifti)
-create_template_unfold_gifti(outdir, outdir); 
+create_template_unfold_gifti(outdir); 
 
 % plot for Quality Assurance
 %plot_manualQA(outdir);
