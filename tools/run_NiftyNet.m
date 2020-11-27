@@ -5,7 +5,7 @@ function run_NiftyNet(img,outdir,CNNmodel)
 
 % don't overwrite existing files
 if ~exist('CNNmodel','var')
-    CNNmodel = 'highres3dnet_large_v0.4';
+    CNNmodel = 'HCP1200-T2';
 end
 
 if ~exist([outdir '/niftynet_lbl.nii.gz'],'file')
@@ -71,8 +71,8 @@ t = system(['net_segment -c ' tmpdir '/CNNinference_config.ini inference']);
 if t~=0
     warning('Could not find NiftyNet, checking for local container');
     tt = system(['singularity exec '...
-    '--nv ' getenv('AUTOTOP_DIR') '/containers/deeplearning_gpu.simg net_segment '...
-    '-c ' tmpdir '/CNNinference_config.ini inference']);
+        '--nv ' getenv('AUTOTOP_DIR') '/containers/hippocampal_autotop_latest.sif net_segment '...
+        '-c ' tmpdir '/CNNinference_config.ini inference']);
     if tt~=0
         error('Could not run NiftyNet on local container');
     end

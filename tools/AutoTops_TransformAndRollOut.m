@@ -1,38 +1,32 @@
-function AutoTops_TransformAndRollOut(inimg,outdir,inlbl,CNNmodel)
+function AutoTops_TransformAndRollOut(inimg,outdir,modality,manual_lbl)
+% Segments and unfolds a 3D hippocampal image that has already been resampled to cropped coronal oblique. 
 % 
-% Segments and unfolds a 3D hippocampal image. Should always be run from
-% Hippocampal_AutoTop directory, and input image should be a cropped
-% hippocampal block (see Resample_CoronalOblique and Resample_Native).
-% inlbl (optional) can be used to specify a manually segmented hippocampus
-% Please manually inspect the output html report!
-% 
-% simple example:
-% addpath(genpath('tools'));
-% inimg = 'example/ManualGroundTruth/sub-073_hemi-R_img.nii.gz';
-% outdir = 'example/test';
-% inlbl = 'example/ManualGroundTruth/sub-073_hemi-R_lbl.nii.gz'; %(optional)
-
+% Inputs:
+% inimg: input single .nii.gz file. Must be in space-MNI152.
+% outdir: output directory.
+% modality: ['HCP1200-T2', 'HCP1200-T1', or 'HCP1200-b1000']. 
+% manual_lbl (optional): specify manual segmentation (see misc/dseg.tsv). 
 % make a local copy
-outdir = [outdir '/']; % ensure this is always considered a directory
-mkdir(outdir);
-system(['cp ' inimg ' ' outdir '/img.nii.gz']);
-inimg = ls([outdir '/img.nii.gz']); inimg(end) = [];
 
-%%
-% check if labelmap exists and if not, apply highres3dnet (via NiftyNet)
-if ~exist('CNNmodel','var')
-    CNNmodel = 'highres3dnet_large_v0.4';
-end
-if ~exist('inlbl','var')
-    inlbl = [];
-end
+%% ensure environment is set up
 
-if ~isempty(inlbl)
-    system(['cp ' inlbl ' ' outdir '/manual_lbl.nii.gz']);
-    inlbl = [outdir '/manual_lbl.nii.gz'];
-else
-    run_NiftyNet(inimg,outdir,CNNmodel); % automatically segment
+autotop_dir = getenv('AUTOTOP_DIR');
+if isempty(autotop_dir)
+    error('you must set the AUTOTOP_DIR environment variable before running');
+end
+if ~exists('modality','var')
+    modality = 'HCP1200-T2';
+end
+addpath(genpath([autotop_dir '/tools']));
+
+%% Unfolding pipeline
+
+if ~exists('manual_lbl','var')
+    run_NiftyNet(inimg,outdir,modality); % automatically segment
+    system(['cp ' manual_lbl ' ' outdir '/manual_lbl.nii.gz']);
     inlbl = [outdir '/niftynet_lbl.nii.gz'];
+else
+    inlbl = manual_lbl;
 end
 
 % post-process using label-label fluid registration to UPenn atlas

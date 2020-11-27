@@ -1,0 +1,23 @@
+INFO:niftynet:2020-09-17 04:43:39,187: starting segmentation application
+INFO:niftynet:2020-09-17 04:43:39,188: `csv_file = ` not found, writing to "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.6_b1000/T2-like.csv" instead.
+INFO:niftynet:2020-09-17 04:43:39,189: Overwriting existing: "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.6_b1000/T2-like.csv".
+INFO:niftynet:2020-09-17 04:43:39,190: [T2-like] search file folders, writing csv file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.6_b1000/T2-like.csv
+INFO:niftynet:2020-09-17 04:43:39,450: `csv_file = ` not found, writing to "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.6_b1000/lbl.csv" instead.
+INFO:niftynet:2020-09-17 04:43:39,451: Overwriting existing: "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.6_b1000/lbl.csv".
+INFO:niftynet:2020-09-17 04:43:39,451: [lbl] search file folders, writing csv file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.6_b1000/lbl.csv
+INFO:niftynet:2020-09-17 04:43:39,689: [inferred] search file folders, writing csv file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.6_b1000/parcellation_output/inferred.csv
+WARNING:niftynet:2020-09-17 04:43:39,870: Loading from existing partitioning file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.6_b1000/dataset_split.csv, ignoring partitioning ratios.
+INFO:niftynet:2020-09-17 04:43:39,885: 
+
+Number of subjects 1068, input section names: ['subject_id', 'T2-like', 'lbl', 'inferred']
+Dataset partitioning:
+-- training 748 cases (70.04%),
+-- validation 160 cases (14.98%),
+-- inference 160 cases (14.98%).
+
+INFO:niftynet:2020-09-17 04:43:57,750: Image reader: loading 160 subjects from sections ('T2-like',) as input [image]
+INFO:niftynet:2020-09-17 04:43:57,750: Image reader: loading 160 subjects from sections ('lbl',) as input [label]
+INFO:niftynet:2020-09-17 04:43:57,750: Image reader: loading 160 subjects from sections ('inferred',) as input [inferred]
+INFO:niftynet:2020-09-17 04:43:57,756: normalisation histogram reference models ready for image:('T2-like',)
+INFO:niftynet:2020-09-17 05:45:15,724: Cleaning up...
+INFO:niftynet:2020-09-17 05:45:15,725: SegmentationApplication stopped (time in second 3677.96).

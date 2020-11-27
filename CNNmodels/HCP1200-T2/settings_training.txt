@@ -1,0 +1,115 @@
+Input params at 2020-05-05 22:03:27.
+[CUSTOM]
+-- num_classes: 9
+-- output_prob: False
+-- label_normalisation: False
+-- softmax: True
+-- min_sampling_ratio: 0
+-- compulsory_labels: (0, 1)
+-- rand_samples: 0
+-- min_numb_labels: 1
+-- proba_connect: True
+-- evaluation_units: foreground
+-- weight: ()
+-- inferred: ()
+-- label: ('lbl',)
+-- image: ('T2-like',)
+-- sampler: ()
+-- name: net_segment
+[CONFIG_FILE]
+-- path: /scratch/jdekrake/Hippocampal_AutoTop/CNNmodels/highres3dnet_large_v0.4/config.ini
+[T2-LIKE]
+-- csv_file: 
+-- path_to_search: /scratch/jdekrake/Hippocampal_AutoTop/trainingdata_v0.4/
+-- filename_contains: ('img',)
+-- filename_not_contains: ()
+-- filename_removefromid: 
+-- interp_order: 1
+-- loader: None
+-- pixdim: (0.3, 0.3, 0.3)
+-- axcodes: ('R', 'A', 'S')
+-- spatial_window_size: (64, 64, 64)
+[LBL]
+-- csv_file: 
+-- path_to_search: /scratch/jdekrake/Hippocampal_AutoTop/trainingdata_v0.4/
+-- filename_contains: ('lbl',)
+-- filename_not_contains: ()
+-- filename_removefromid: 
+-- interp_order: 0
+-- loader: None
+-- pixdim: (0.3, 0.3, 0.3)
+-- axcodes: ('R', 'A', 'S')
+-- spatial_window_size: (64, 64, 64)
+[SYSTEM]
+-- cuda_devices: ""
+-- num_threads: 2
+-- num_gpus: 1
+-- model_dir: /scratch/jdekrake/Hippocampal_AutoTop/CNNmodels/highres3dnet_large_v0.4
+-- dataset_split_file: ./dataset_split.csv
+-- event_handler: ('model_saver', 'model_restorer', 'sampler_threading', 'apply_gradients', 'output_interpreter', 'console_logger', 'tensorboard_logger')
+-- iteration_generator: iteration_generator
+-- action: training
+[NETWORK]
+-- name: highres3dnet_large
+-- activation_function: relu
+-- batch_size: 1
+-- smaller_final_batch_mode: pad
+-- decay: 0.0
+-- reg_type: L2
+-- volume_padding_size: (0, 0, 0)
+-- volume_padding_mode: minimum
+-- window_sampling: uniform
+-- queue_length: 5
+-- multimod_foreground_type: and
+-- histogram_ref_file: ./histogram_ref_file.txt
+-- norm_type: percentile
+-- cutoff: (0.001, 0.999)
+-- foreground_type: mean_plus
+-- normalisation: True
+-- whitening: False
+-- normalise_foreground_only: False
+-- weight_initializer: he_normal
+-- bias_initializer: zeros
+-- keep_prob: 1.0
+-- weight_initializer_args: {}
+-- bias_initializer_args: {}
+[TRAINING]
+-- optimiser: adam
+-- sample_per_volume: 5
+-- rotation_angle: (-10.0, 10.0)
+-- rotation_angle_x: ()
+-- rotation_angle_y: ()
+-- rotation_angle_z: ()
+-- scaling_percentage: ()
+-- antialiasing: True
+-- bias_field_range: (-5.0, 5.0)
+-- bf_order: 3
+-- random_flipping_axes: (0,)
+-- do_elastic_deformation: True
+-- num_ctrl_points: 4
+-- deformation_sigma: 15.0
+-- proportion_to_deform: 0.75
+-- lr: 0.001
+-- loss_type: Dice
+-- starting_iter: -1
+-- save_every_n: 1000
+-- tensorboard_every_n: 100
+-- max_iter: 500000
+-- max_checkpoints: 100
+-- validation_every_n: 100
+-- validation_max_iter: 1
+-- exclude_fraction_for_validation: 0.2
+-- exclude_fraction_for_inference: 0.2
+-- vars_to_restore: 
+-- vars_to_freeze: 
+[INFERENCE]
+-- spatial_window_size: ()
+-- inference_iter: -1
+-- dataset_to_infer: 
+-- save_seg_dir: /scratch/jdekrake/Hippocampal_AutoTop/CNNmodels/highres3dnet_large_v0.4/parcellation_output
+-- output_postfix: _niftynet_out
+-- output_interp_order: 0
+-- border: (16, 16, 16)
+[EVALUATION]
+-- evaluations: dice,average_distance
+-- save_csv_dir: /scratch/jdekrake/Hippocampal_AutoTop/CNNmodels/highres3dnet_large_v0.4/eval

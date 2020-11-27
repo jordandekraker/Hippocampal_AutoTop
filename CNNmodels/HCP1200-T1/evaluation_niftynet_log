@@ -1,0 +1,72 @@
+INFO:niftynet:2020-11-09 17:11:20,431: starting segmentation application
+INFO:niftynet:2020-11-09 17:11:20,432: `csv_file = ` not found, writing to "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/T2-like.csv" instead.
+INFO:niftynet:2020-11-09 17:11:20,433: Overwriting existing: "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/T2-like.csv".
+INFO:niftynet:2020-11-09 17:11:20,435: [T2-like] search file folders, writing csv file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/T2-like.csv
+INFO:niftynet:2020-11-09 17:11:20,758: `csv_file = ` not found, writing to "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/lbl.csv" instead.
+INFO:niftynet:2020-11-09 17:11:20,759: Overwriting existing: "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/lbl.csv".
+INFO:niftynet:2020-11-09 17:11:20,759: [lbl] search file folders, writing csv file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/lbl.csv
+INFO:niftynet:2020-11-09 17:11:21,050: `csv_file = /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/parcellation_output/inferred.csv` not found, writing to "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/inferred.csv" instead.
+INFO:niftynet:2020-11-09 17:11:21,050: [inferred] search file folders, writing csv file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/inferred.csv
+WARNING:niftynet:2020-11-09 17:11:21,337: Loading from existing partitioning file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/dataset_split.csv, ignoring partitioning ratios.
+INFO:niftynet:2020-11-09 17:11:21,340: 
+
+Number of subjects 2126, input section names: ['subject_id', 'T2-like', 'lbl', 'inferred']
+Dataset partitioning:
+-- training 1434 cases (67.45%),
+-- validation 306 cases (14.39%),
+-- inference 306 cases (14.39%).
+
+INFO:niftynet:2020-11-09 17:16:00,242: Image reader: loading 2046 subjects from sections ('T2-like',) as input [image]
+INFO:niftynet:2020-11-09 17:16:00,243: Image reader: loading 2046 subjects from sections ('lbl',) as input [label]
+INFO:niftynet:2020-11-09 17:16:00,243: Image reader: loading 2046 subjects from sections ('inferred',) as input [inferred]
+INFO:niftynet:2020-11-09 17:16:00,248: training normalisation histogram references for image:{'T2-like'}, using 2046 subjects
+INFO:niftynet:2020-11-10 04:29:29,608: Cleaning up...
+INFO:niftynet:2020-11-10 04:29:29,668: SegmentationApplication stopped (time in second 38738.65).
+INFO:niftynet:2020-11-10 18:26:26,995: starting segmentation application
+INFO:niftynet:2020-11-10 18:26:27,006: `csv_file = ` not found, writing to "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/T2-like.csv" instead.
+INFO:niftynet:2020-11-10 18:26:27,006: Overwriting existing: "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/T2-like.csv".
+INFO:niftynet:2020-11-10 18:26:27,008: [T2-like] search file folders, writing csv file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/T2-like.csv
+INFO:niftynet:2020-11-10 18:26:27,457: `csv_file = ` not found, writing to "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/lbl.csv" instead.
+INFO:niftynet:2020-11-10 18:26:27,457: Overwriting existing: "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/lbl.csv".
+INFO:niftynet:2020-11-10 18:26:27,458: [lbl] search file folders, writing csv file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/lbl.csv
+INFO:niftynet:2020-11-10 18:26:27,851: `csv_file = /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/parcellation_output/inferred.csv` not found, writing to "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/inferred.csv" instead.
+INFO:niftynet:2020-11-10 18:26:27,877: Overwriting existing: "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/inferred.csv".
+INFO:niftynet:2020-11-10 18:26:27,877: [inferred] search file folders, writing csv file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/inferred.csv
+WARNING:niftynet:2020-11-10 18:26:28,282: Loading from existing partitioning file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/dataset_split.csv, ignoring partitioning ratios.
+INFO:niftynet:2020-11-10 18:26:28,287: 
+
+Number of subjects 2126, input section names: ['subject_id', 'T2-like', 'lbl', 'inferred']
+Dataset partitioning:
+-- training 1434 cases (67.45%),
+-- validation 306 cases (14.39%),
+-- inference 306 cases (14.39%).
+
+INFO:niftynet:2020-11-10 18:31:27,569: Image reader: loading 2046 subjects from sections ('T2-like',) as input [image]
+INFO:niftynet:2020-11-10 18:31:27,577: Image reader: loading 2046 subjects from sections ('lbl',) as input [label]
+INFO:niftynet:2020-11-10 18:31:27,577: Image reader: loading 2046 subjects from sections ('inferred',) as input [inferred]
+INFO:niftynet:2020-11-10 18:31:27,640: normalisation histogram reference models ready for image:('T2-like',)
+INFO:niftynet:2020-11-11 08:28:22,545: Cleaning up...
+INFO:niftynet:2020-11-11 08:28:22,610: SegmentationApplication stopped (time in second 50214.96).
+INFO:niftynet:2020-11-16 15:34:10,790: starting segmentation application
+INFO:niftynet:2020-11-16 15:34:10,799: `csv_file = ` not found, writing to "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/T2-like.csv" instead.
+INFO:niftynet:2020-11-16 15:34:10,800: Overwriting existing: "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/T2-like.csv".
+INFO:niftynet:2020-11-16 15:34:10,802: [T2-like] search file folders, writing csv file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/T2-like.csv
+INFO:niftynet:2020-11-16 15:34:12,653: `csv_file = ` not found, writing to "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/lbl.csv" instead.
+INFO:niftynet:2020-11-16 15:34:12,654: Overwriting existing: "/scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/lbl.csv".
+INFO:niftynet:2020-11-16 15:34:12,654: [lbl] search file folders, writing csv file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/lbl.csv
+INFO:niftynet:2020-11-16 15:34:14,086: [inferred] search file folders, writing csv file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/parcellation_output/inferred.csv
+WARNING:niftynet:2020-11-16 15:34:15,564: Loading from existing partitioning file /scratch/jdekrake/Hippocampal_AutoTop_tests/CNNmodels/highres3dnet_large_v0.7_T1/dataset_split.csv, ignoring partitioning ratios.
+INFO:niftynet:2020-11-16 15:34:15,571: 
+
+Number of subjects 4252, input section names: ['subject_id', 'T2-like', 'lbl', 'inferred']
+Dataset partitioning:
+-- training 1434 cases (33.73%),
+-- validation 306 cases (7.20%),
+-- inference 306 cases (7.20%).
+
+INFO:niftynet:2020-11-16 15:34:44,237: Image reader: loading 306 subjects from sections ('T2-like',) as input [image]
+INFO:niftynet:2020-11-16 15:34:44,238: Image reader: loading 306 subjects from sections ('lbl',) as input [label]
+INFO:niftynet:2020-11-16 15:34:44,238: Image reader: loading 306 subjects from sections ('inferred',) as input [inferred]
+INFO:niftynet:2020-11-16 15:34:44,245: normalisation histogram reference models ready for image:('T2-like',)
+INFO:niftynet:2020-11-16 17:36:57,468: Cleaning up...
+INFO:niftynet:2020-11-16 17:36:57,539: SegmentationApplication stopped (time in second 7333.29).
