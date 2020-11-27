@@ -1,6 +1,28 @@
 ### Summary
 
-This tool aims to automatically model the topological folding structure of the human hippocampus. It is currently set up to use sub-millimetric T2w MRI data, but may be adapted for other data types. This can then be used to apply the hippocampal unfolding methods presented in [DeKraker et al., 2019](https://www.sciencedirect.com/science/article/pii/S1053811917309977), and ex-vivo subfield boundaries can be topologically applied from [DeKraker et al., 2020](https://www.sciencedirect.com/science/article/pii/S105381191930919X?via%3Dihub).
+This tool aims to automatically model the topological folding structure of the human hippocampus. This can then be used to apply the hippocampal unfolding methods presented in [DeKraker et al., 2019](https://www.sciencedirect.com/science/article/pii/S1053811917309977), and ex-vivo subfield boundaries can be topologically applied from [DeKraker et al., 2020](https://www.sciencedirect.com/science/article/pii/S105381191930919X?via%3Dihub).
+
+Currently optimized for 0.7mm isotropic T2w data from the HCP1200 dataset, but options for T1w and DWI data also exist. 
+
+This repo supports end-end processing of data that is registered to MNI152, runs on single images, and is intended for testing purposes. For BIDSapp that support multiple images, preprocessing, alignment, and more, see https://github.com/khanlab/hippunfold.
+
+### Installation
+
+The preferred method to run the code is through Docker or Singularity, using the container provided. 
+`singularity pull docker://jordandekraker/hippocampal_autotop:latest hippocampal_autotop_latest.sif`
+
+### Usage
+
+```
+singularity run --nv hippocampal_autotop_latest.sif \
+example/HCP_100206/sub-100206_acq-procHCP_T2w.nii.gz \
+test/HCP_100206/
+```
+Can leave out `--nv` if not using GPU. Can further specify modality \['HCP1200-T2', 'HCP1200-T1', or 'HCP1200-b1000'\]. Can further specify a manual segmentation (see misc/dseg.tsv).
+
+Can also be run directly from MATLAB (clone repo and place `hippocampal_autotop_latest.sif` in `containers/`). See `help singleSubject` or, if data is already cropped & coronal oblique `help AutoTops_TransformAndRollOut`
+
+### Pipeline Overview
 
 ![Pipeline Overview](https://github.com/jordandekraker/Hippocampal_AutoTop/blob/master/misc/pipeline_overview.png)
 
@@ -19,26 +41,6 @@ The overall workflow can be summarized in the following steps:
 5) Quality assurance via inspection of Laplace gradients, grey matter mid-surface, and flatmapped features
 
 6) Application of subfield boundaries according to predifined topological coordinates
-
-
-### Installation
-
-The preferred method to run the code is through Docker or Singularity, using the container provided on docker hub https://hub.docker.com/r/khanlab/hippocampal_autotop,  `docker://khanlab/hippocampal_autotop:latest`
-
-If you have your data in BIDS format, you can alternatively use the BIDS App wrapper at https://github.com/khanlab/hippocampal_autotop_bids, or on docker hub https://hub.docker.com/r/khanlab/hippocampal_autotop_bids.
-
-### Usage
-
-Running in Matlab (with all dependencies installed - see http://hub.docker.com/r/khanlab/autotop_deps):
-```
-singleSubject \<input T2w image\> \<output directory\> \<OPTIONAL manual tissue segmentation\> \<OPTIONAL study-specific reference atlas for cropping around the hippocampi\>
-```
-
-Running with Singularity:
-```
-singularity pull docker://khanlab/hippocampal_autotop:latest hippocampal_autotop_latest.sif
-singularity run --nv hippocampal_autotop_latest.sif /path/to/input_data/subj01_T2w.nii.gz /path/to/output_data/output_subj01  # can leave out the --nv if not using GPU
-```
 
 #### Processing time for a single subject:
 
