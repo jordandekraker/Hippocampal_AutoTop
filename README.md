@@ -12,13 +12,12 @@ The preferred method to run the code is through Docker or Singularity, using the
 `singularity pull docker://jordandekraker/hippocampal_autotop:latest hippocampal_autotop_latest.sif`
 
 ### Usage
-
 ```
-singularity run --nv hippocampal_autotop_latest.sif \
-example/HCP_100206/sub-100206_acq-procHCP_T2w.nii.gz \
-test/HCP_100206/
+singularity run --nv hippocampal_autotop_latest.sif \ #Can leave out `--nv` if not using GPU.
+example/HCP_100206/sub-100206_acq-procHCP_T2w.nii.gz \ #Input image. Must be in space-MNI152
+test/HCP_100206/ #Output directory
 ```
-Can leave out `--nv` if not using GPU. Can further specify modality \['HCP1200-T2', 'HCP1200-T1', or 'HCP1200-b1000'\]. Can further specify a manual segmentation (see misc/dseg.tsv).
+Can further specify modality \['HCP1200-T2', 'HCP1200-T1', or 'HCP1200-b1000'\]. Can further specify a manual segmentation image (see misc/dseg.tsv).
 
 Can also be run directly from MATLAB (clone repo and place `hippocampal_autotop_latest.sif` in `containers/`). See `help singleSubject` or, if data is already cropped & coronal oblique `help AutoTops_TransformAndRollOut`
 
