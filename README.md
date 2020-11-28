@@ -1,6 +1,6 @@
 ### Summary
 
-This tool aims to automatically model the topological folding structure of the human hippocampus. This can then be used to apply the hippocampal unfolding methods presented in [DeKraker et al., 2019](https://www.sciencedirect.com/science/article/pii/S1053811917309977), and ex-vivo subfield boundaries can be topologically applied from [DeKraker et al., 2020](https://www.sciencedirect.com/science/article/pii/S105381191930919X?via%3Dihub).
+This tool aims to automatically model the topological folding structure of the human hippocampus. This can then be used to apply the hippocampal unfolding methods presented in [DeKraker et al., 2019](https://www.sciencedirect.com/science/article/pii/S1053811917309977), and ex-vivo subfield boundaries can be topologically propagated from [DeKraker et al., 2020](https://www.sciencedirect.com/science/article/pii/S105381191930919X?via%3Dihub).
 
 Currently optimized for 0.7mm isotropic T2w data from the HCP1200 dataset, but options for T1w and DWI data also exist. 
 
@@ -12,7 +12,7 @@ The preferred method to run the code is through Docker or Singularity, using the
 `singularity pull docker://jordandekraker/hippocampal_autotop:latest hippocampal_autotop_latest.sif`
 
 ### Usage
-`singularity run --nv hippocampal_autotop_latest.sif <input image> <output directory> <(optional) modality \['HCP1200-T2', 'HCP1200-T1', or 'HCP1200-b1000'\]> <(optional) manual segmentation image>`
+`singularity run --nv hippocampal_autotop_latest.sif <input image> <output directory> <(optional) modality \[HCP1200-T2, HCP1200-T1, or HCP1200-b1000\]> <(optional) manual segmentation image>`
 
 For example:
 ```
@@ -20,7 +20,7 @@ singularity run --nv hippocampal_autotop_latest.sif \
 example/HCP_100206/sub-100206_acq-procHCP_T2w.nii.gz \
 test/HCP_100206/
 ```
-Can also be run directly from MATLAB (clone repo and place `hippocampal_autotop_latest.sif` in `containers/`). See `help singleSubject` or, if data is already cropped & coronal oblique `help AutoTops_TransformAndRollOut`
+Can also be run directly from MATLAB (clone repo and place `hippocampal_autotop_latest.sif` in `containers/`). See `help singleSubject` or, if data is already cropped & coronal oblique `help AutoTops_TransformAndRollOut`. 
 
 ### Pipeline Overview
 
