@@ -17,7 +17,7 @@ end
 if ~exist('modality','var')
     modality = 'HCP1200-T2';
 end
-addpath(genpath([autotop_dir '/tools']));
+
 
 %% Unfolding pipeline
 

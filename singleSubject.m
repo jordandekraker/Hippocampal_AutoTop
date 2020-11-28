@@ -19,7 +19,6 @@ end
 if ~exist('modality','var')
     modality = 'HCP1200-T2';
 end
-addpath(genpath([autotop_dir '/tools']));
 
 %% Transform to 0.3mm Coronal Oblique (from MNI152 ONLY)
 
