@@ -16,7 +16,7 @@ autotop_dir = getenv('AUTOTOP_DIR');
 if isempty(autotop_dir)
     error('you must set the AUTOTOP_DIR environment variable before running');
 end
-if ~exists('modality','var')
+if ~exist('modality','var')
     modality = 'HCP1200-T2';
 end
 addpath(genpath([autotop_dir '/tools']));
@@ -72,9 +72,9 @@ for LR = 'LR'
     inimgLR = [outdir '/hemi-' LR '/img.nii.gz'];
     outdirLR = [outdir '/hemi-' LR '/'];
     if ~exist('manual_lbl','var')
-        AutoTops_TransformAndRollOut(inimgLR,outdirLR,[],modality)
+        AutoTops_TransformAndRollOut(inimgLR,outdirLR,modality,[])
     else
         AutoTops_TransformAndRollOut(inimgLR,outdirLR,...
-            [outdir '/hemi-R/manual_lbl.nii.gz'],modality)
+            modality,[outdir '/hemi-R/manual_lbl.nii.gz'])
     end
 end

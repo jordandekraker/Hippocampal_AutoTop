@@ -14,14 +14,14 @@ autotop_dir = getenv('AUTOTOP_DIR');
 if isempty(autotop_dir)
     error('you must set the AUTOTOP_DIR environment variable before running');
 end
-if ~exists('modality','var')
+if ~exist('modality','var')
     modality = 'HCP1200-T2';
 end
 addpath(genpath([autotop_dir '/tools']));
 
 %% Unfolding pipeline
 
-if ~exists('manual_lbl','var')
+if ~exist('manual_lbl','var') || isempty(manual_lbl)
     run_NiftyNet(inimg,outdir,modality); % automatically segment
     system(['cp ' manual_lbl ' ' outdir '/manual_lbl.nii.gz']);
     inlbl = [outdir '/niftynet_lbl.nii.gz'];

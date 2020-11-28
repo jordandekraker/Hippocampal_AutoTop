@@ -70,11 +70,17 @@ disp(['net_segment -c ' tmpdir '/CNNinference_config.ini inference']);
 t = system(['net_segment -c ' tmpdir '/CNNinference_config.ini inference']);
 if t~=0
     warning('Could not find NiftyNet, checking for local container');
-    tt = system(['singularity exec '...
+    tt = system(['singularity run '...
         '--nv ' getenv('AUTOTOP_DIR') '/containers/hippocampal_autotop_latest.sif net_segment '...
         '-c ' tmpdir '/CNNinference_config.ini inference']);
     if tt~=0
-        error('Could not run NiftyNet on local container');
+        warning('Could not run NiftyNet on local container, trying without GPU');
+        ttt = system(['singularity run '...
+            getenv('AUTOTOP_DIR') '/containers/hippocampal_autotop_latest.sif net_segment '...
+            '-c ' tmpdir '/CNNinference_config.ini inference']);
+        if ttt~=0
+            error('Could not run NiftyNet on local container');
+        end
     end
 end
 
