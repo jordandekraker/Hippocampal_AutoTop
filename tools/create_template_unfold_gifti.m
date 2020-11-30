@@ -1,9 +1,10 @@
 function create_template_unfold_gifti(out_folder, ...
-    n_steps_unfold, affine_unfold)
+    n_steps_unfold, phys_scaling_mm, unfold_origin_mm)
 arguments
     out_folder string
     n_steps_unfold  (1,3) double = [256, 128, 16]
-    affine_unfold (4,4) double = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1]
+    phys_scaling_mm  (1,3) double = [40,20,2.5]
+    unfold_origin_mm (1,3) double = [0,200,0] %needs to be outside of brain to
 end
 
 % This function will generate the following files in the
@@ -14,6 +15,24 @@ end
 %
 % Then, you can use wb_command with a subject's warp to transform to native
 % wb_command  -surface-apply-warpfield  midthickness_254x126.unfolded.surf.gii Warp_unfold2native.nii midthickness_254x126.native.surf.gii 
+
+
+unfold_coord_nii = sprintf('%s/unfold_ref.nii',out_folder);
+
+vox_size = 1.0./(n_steps_unfold -1);
+
+
+scaled_vox_size = phys_scaling_mm./n_steps_unfold;
+
+%create unfold phys coordinates file using c3d:
+%  orientation: ALI is A-P,  L-R,  I-S;
+%    chosen to correspond with hippocampal coords: A-P, P-D, I-O
+system(sprintf('c3d -create %dx%dx%d %fx%fx%fmm -origin %fx%fx%fmm -orient ALI -coordinate-map-voxel -spacing %fx%fx%fmm -popas ZI -popas YI -popas XI -push XI -scale %f -push YI -scale %f -push ZI -scale %f -omc %s',n_steps_unfold, vox_size,unfold_origin_mm,scaled_vox_size,vox_size,unfold_coord_nii));
+
+
+
+unfold_info = niftiinfo(unfold_coord_nii);
+affine_unfold = unfold_info.Transform.T';
 
 
 
@@ -27,7 +46,8 @@ end
 n_steps_unfold_crop = [n_steps_unfold(1)-2,n_steps_unfold(2)-2,1];
 
 %we create three 2-d surfaces:
-io_inds = [2,ceil(n_steps_unfold(3)/2),n_steps_unfold(3)-1];
+% the inner and outer 
+io_inds = [3,ceil(n_steps_unfold(3)/2),n_steps_unfold(3)-2];
 surf_names = {'inner','midthickness','outer'};
 
 
@@ -101,6 +121,6 @@ for surf_i = 1:length(surf_names)
     gii_unfold = sprintf('%s/%s.unfolded.surf.gii',out_folder,surf_name);
     save(g,gii_unfold,'Base64Binary');
     
-    
+end 
     
 end
