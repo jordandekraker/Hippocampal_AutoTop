@@ -1,20 +1,18 @@
-function create_warps(in_folder, out_folder, n_steps_unfold, phys_scaling_mm, unfold_origin_mm)
+function create_warps(in_folder, out_folder)
 arguments
     in_folder string
     out_folder string
-    n_steps_unfold  (1,3) double = [256, 128, 16]
-    phys_scaling_mm  (1,3) double = [40,20,2.5]
-    unfold_origin_mm (1,3) double = [0,200,0] %needs to be outside of brain to
-    %avoid artifacts when resampling from unfold to native
-    
 end
-% - test params:
-%     n_steps_unfold = [256, 128, 16]
-%     phys_scaling_mm = [40,20,2.5]
 
 if ( ~exist(out_folder))
     mkdir(out_folder)
 end
+
+n_steps_unfold = [256 128 16];
+
+%get path to reference nifti relative to this script (../misc)
+[path,name,ext] = fileparts(mfilename('fullpath'));
+unfold_ref_nii = [path '/../misc/unfold_ref_256x128x16.nii.gz'];
 
 in_coord_ap_nii=sprintf('%s/coords-AP.nii.gz',in_folder);
 in_coord_pd_nii=sprintf('%s/coords-PD.nii.gz',in_folder);
@@ -33,25 +31,57 @@ out_native_phys_coords_nii=sprintf('%s/native_phys_coords.nii',out_folder);
 native_info = niftiinfo(in_coord_ap_nii);
 affine_native = native_info.Transform.T';
 
-%create unfolded coords reference
-
-vox_size = 1.0./(n_steps_unfold -1);
-
-
-scaled_vox_size = phys_scaling_mm./n_steps_unfold;
-
-unfold_coord_nii = sprintf('%s/unfold_ref.nii',out_folder);
-
-%create unfold phys coordinates file using c3d:
-%  orientation: ALI is A-P,  L-R,  I-S;
-%    chosen to correspond with hippocampal coords: A-P, P-D, I-O
-system(sprintf('c3d -create %dx%dx%d %fx%fx%fmm -origin %fx%fx%fmm -orient ALI -coordinate-map-voxel -spacing %fx%fx%fmm -popas ZI -popas YI -popas XI -push XI -scale %f -push YI -scale %f -push ZI -scale %f -omc %s',n_steps_unfold, vox_size,unfold_origin_mm,scaled_vox_size,vox_size,unfold_coord_nii));
+%% create unfolded coords reference
+%
 
 
 
-unfold_info = niftiinfo(unfold_coord_nii);
-affine_unfold = unfold_info.Transform.T';
 
+    
+    unfold_info = niftiinfo(unfold_ref_nii);
+    unfold_info.ImageSize = [unfold_info.ImageSize,3];
+    unfold_info.PixelDimensions = [unfold_info.PixelDimensions,1];
+    affine_unfold = unfold_info.Transform.T';
+
+
+
+%build sampling vectors in normalized unfolded space (0-1)
+samplingu=0:1/(n_steps_unfold(1)-1):1;  %here N is setting the number of steps
+samplingv=0:1/(n_steps_unfold(2)-1):1;
+samplingw=0:1/(n_steps_unfold(3)-1):1;
+
+
+%and the corresponding meshgrid
+[gv,gu,gw]=meshgrid(samplingv,samplingu,samplingw);
+
+
+%first get coords in the space of the unfold nii (which is from 0 to N-1),
+%not 0-1
+gu_ = gu.*(n_steps_unfold(1)-1);  % here, N is setting the physical dimensions
+gv_ = gv.*(n_steps_unfold(2)-1);
+gw_ = gw.*(n_steps_unfold(3)-1);
+
+%unfold_info = niftiinfo(unfold_ref_nii);
+%affine_unfold = unfold_info.Transform.T';
+
+
+%convert inds from 0-(N-1) to phys inds in unfolded space, byapplying
+%affine (first cat into vec)
+unfold_coords_mat = cat(4,gu_,gv_,gw_);
+unfold_coords_mat = reshape(unfold_coords_mat,[prod(size(unfold_coords_mat,1,2,3)),3]);
+unfold_coords_mat = [unfold_coords_mat,ones(size(unfold_coords_mat,1),1)]';
+
+unfold_coords_phys = affine_unfold*unfold_coords_mat;
+unfold_coords_phys = unfold_coords_phys(1:3,:)';
+
+
+%reshape back to an image
+unfold_coords_phys_img = reshape(unfold_coords_phys,[n_steps_unfold,1,3]);
+
+
+niftiwrite(single(reshape(unfold_coords_phys_img,[n_steps_unfold,1,3])),out_unfold_phys_coords_nii,unfold_info);
+
+%%
 
 %load coords niftis
 coord_ap = double(niftiread(in_coord_ap_nii));
@@ -87,15 +117,7 @@ interp_Y = scatteredInterpolant(Laplace_AP,Laplace_PD,Laplace_IO,native_coords_p
 interp_Z = scatteredInterpolant(Laplace_AP,Laplace_PD,Laplace_IO,native_coords_phys(:,3),interp,extrap);
 
 
-
-%build sampling vectors in normalized unfolded space (0-1)
-samplingu=0:1/(n_steps_unfold(1)-1):1;  %here N is setting the number of steps
-samplingv=0:1/(n_steps_unfold(2)-1):1;
-samplingw=0:1/(n_steps_unfold(3)-1):1;
-
-
-%and the corresponding meshgrid
-[gv,gu,gw]=meshgrid(samplingv,samplingu,samplingw);
+%% this section is the one that takes long..
 
 %use this to interpolate at every unfolded grid point, the corresponding
 %phys x,y,z
@@ -104,6 +126,7 @@ Xi=interp_X(gu,gv,gw);
 Yi=interp_Y(gu,gv,gw);
 Zi=interp_Z(gu,gv,gw);
 
+%%
 %stack these into a single vector image
 mapToNative = cat(4,Xi,Yi,Zi);
 
@@ -115,28 +138,10 @@ mapToNative = cat(4,Xi,Yi,Zi);
 %
 %  displacement = mapToNative - unfolded_itk_coords
 
-%first get coords in the space of the unfold nii (which is from 0 to N-1),
-%not 0-1
-gu_ = gu.*(n_steps_unfold(1)-1);  % here, N is setting the physical dimensions
-gv_ = gv.*(n_steps_unfold(2)-1);
-gw_ = gw.*(n_steps_unfold(3)-1);
 
-
-%convert inds from 0-(N-1) to phys inds in unfolded space, byapplying
-%affine (first cat into vec)
-unfold_coords_mat = cat(4,gu_,gv_,gw_);
-unfold_coords_mat = reshape(unfold_coords_mat,[prod(size(unfold_coords_mat,1,2,3)),3]);
-unfold_coords_mat = [unfold_coords_mat,ones(size(unfold_coords_mat,1),1)]';
-
-unfold_coords_phys = affine_unfold*unfold_coords_mat;
-unfold_coords_phys = unfold_coords_phys(1:3,:)';
-
-
-%reshape back to an image
-unfold_coords_phys_img = reshape(unfold_coords_phys,size(mapToNative));
 
 % create the displacement field
-displacementToNative = mapToNative - unfold_coords_phys_img;
+displacementToNative = reshape(mapToNative,[n_steps_unfold,1,3]) - unfold_coords_phys_img;
 
 
 displacementToNative = reshape(displacementToNative,[n_steps_unfold,1,3]);
@@ -144,65 +149,113 @@ displacementToNative = reshape(displacementToNative,[n_steps_unfold,1,3]);
 
 niftiwrite(single(reshape(mapToNative,[n_steps_unfold,1,3])),out_absolute_unfold2native_nii,unfold_info);
 
-niftiwrite(single(reshape(unfold_coords_phys_img,[n_steps_unfold,1,3])),out_unfold_phys_coords_nii,unfold_info);
-
 %write to file
 niftiwrite(single(displacementToNative),out_unfold2native_nii,unfold_info);
 
-%convert to ITK transform using c3d (simply scaling X and Y by -1)
-system(sprintf('c3d -mcs %s -popas DZ -popas DY -popas DX -push DX -scale -1 -push DY -scale -1 -push DZ -omc %s',...
-    out_unfold2native_nii, out_native2unfold_itk_nii));
+itk_displacementToNative = displacementToNative;
+itk_displacementToNative(:,:,:,:,1) = -itk_displacementToNative(:,:,:,:,1);
+itk_displacementToNative(:,:,:,:,2) = -itk_displacementToNative(:,:,:,:,2);
 
-%----------- native2unfold
+comp_info = unfold_info;
+comp_info.ImageSize = comp_info.ImageSize(1:3);
+comp_info.PixelDimensions = comp_info.PixelDimensions(1:3);
 
-mask_vec = repmat(mask,[1,1,1,3]);
-coords_vec = zeros(size(mask_vec));
-
-%get native phys coords
-native_vec_info = niftiinfo(out_native_phys_coords_nii);
-native_phys_coords = niftiread(out_native_phys_coords_nii);
-
-%here we get the ap, pd, io coords, (the new unfolded coords)
-uvw = zeros(sum(mask(:)==1),3);
-for d = 1:3
-    coord_img =  squeeze(coord_all(:,:,:,d));
-    uvw(:,d) = coord_img(mask==1) .* (n_steps_unfold(d)-1);
-end
-
-uvw1 = [uvw, ones(size(uvw,1),1)];
-uvw1_phys = affine_unfold*uvw1';
-uvw_phys = uvw1_phys(1:3,:)';
-
-
-
-for d=1:3
-    coord_img = squeeze(native_phys_coords(:,:,:,d));
-    coord_img(mask==1) = uvw_phys(:,d);
-    coords_vec(:,:,:,d) = coord_img;
-end
-
-
-% at this point, coords_vec contains the new_coords in unfolded space
-% we want to subtract the original coords from this
-
-%easy way of getting the original phys coords is from c3d:
-system(sprintf('c3d %s -coordinate-map-physical -omc %s', ...
-    in_coord_ap_nii,out_native_phys_coords_nii));
-
-
-%now we want to load it up and subtract from new_coords
-
-
-displacement_native = reshape(coords_vec,[size(coords_vec,1,2,3),1,3]) - native_phys_coords;
-
-niftiwrite(displacement_native,out_native2unfold_nii,native_vec_info);
-
+disp_x_nii = [tempname '_x.nii'];
+disp_y_nii = [tempname '_y.nii'];
+disp_z_nii = [tempname '_z.nii'];
+    
+niftiwrite(single(squeeze(displacementToNative(:,:,:,:,1))),disp_x_nii,comp_info);
+niftiwrite(single(squeeze(displacementToNative(:,:,:,:,2))),disp_y_nii,comp_info);
+niftiwrite(single(squeeze(displacementToNative(:,:,:,:,3))),disp_z_nii,comp_info);
 
 %convert to ITK transform using c3d (simply scaling X and Y by -1)
-system(sprintf('c3d -mcs %s -popas DZ -popas DY -popas DX -push DX -scale -1 -push DY -scale -1 -push DZ -omc %s',...
-    out_native2unfold_nii, out_unfold2native_itk_nii));
+system(sprintf('c3d %s -popas DZ %s -popas DY %s -popas DX -push DX -scale -1 -push DY -scale -1 -push DZ -omc %s',...
+    disp_z_nii,disp_y_nii,disp_x_nii, ...
+     out_native2unfold_itk_nii));
+ 
+%% native to unfold
+
+    mask_vec = repmat(mask,[1,1,1,3]);
+    coords_vec = zeros(size(mask_vec));
 
 
+
+    uvw = zeros(sum(mask(:)==1),3);
+    for d = 1:3
+        coord_img =  squeeze(coord_all(:,:,:,d));
+
+        uvw(:,d) = coord_img(mask==1) .* (n_steps_unfold(d)-1);
+    end
+
+    uvw1 = [uvw, ones(size(uvw,1),1)];
+    uvw1_phys = affine_unfold*uvw1';
+    uvw_phys = uvw1_phys(1:3,:)';
+
+    for d=1:3
+        coord_img = zeros(size(mask));
+        coord_img(mask==1) = uvw_phys(:,d);
+        coords_vec(:,:,:,d) = coord_img;
+    end
+
+
+    % at this point, coords_vec contains the new_coords in unfolded space
+    % we want to subtract the original coords from this
+
+
+    % a warp file is the displacement,   origcoord + displacement = new_coords
+    % right now, coords_vec has the new_coords
+    % so we just need to subtract is origcoords, which is the subscripts of the
+    % voxel, changed to index from 0 (ie subtract 1), and converted to phys
+    % coords by affine
+
+    [x,y,z] = ind2sub(size(mask),find(mask==1));
+
+    %indices need to start from 0 if applying xfm
+    native_coords_mat = [x-1, y-1, z-1,ones(size(x,1),1)]';
+
+    %apply affine to get world coords
+    native_coords_phys = affine_native*native_coords_mat;
+
+
+    %put phys coords back into coords_vec, and write out nifti
+    for d=1:3
+        unfold_coord = coords_vec(:,:,:,d);
+        orig_coord = zeros(size(unfold_coord));
+        %here, we are doing:  new_coords - orig_coords (to get displacement)
+        orig_coord(mask==1) = native_coords_phys(d,:);   
+        coords_vec(:,:,:,d) = mask.*(unfold_coord - orig_coord);
+    end
+
+    
+ 
+    native_vec_info = native_info;
+    native_vec_info.ImageSize = [native_vec_info.ImageSize, 1,3];
+    native_vec_info.PixelDimensions = [native_vec_info.PixelDimensions, 1,1];
+    native_vec_info.Datatype = 'single';
+
+    niftiwrite(single(reshape(coords_vec,native_vec_info.ImageSize)),out_native2unfold_nii,native_vec_info);
+
+    
+    
+comp_info = native_info;
+comp_info.ImageSize = comp_info.ImageSize(1:3);
+comp_info.PixelDimensions = comp_info.PixelDimensions(1:3);
+
+disp_x_nii = [tempname '_x.nii'];
+disp_y_nii = [tempname '_y.nii'];
+disp_z_nii = [tempname '_z.nii'];
+    
+niftiwrite(single(squeeze(coords_vec(:,:,:,1))),disp_x_nii,comp_info);
+niftiwrite(single(squeeze(coords_vec(:,:,:,2))),disp_y_nii,comp_info);
+niftiwrite(single(squeeze(coords_vec(:,:,:,3))),disp_z_nii,comp_info);
+
+   
+%convert to ITK transform using c3d (simply scaling X and Y by -1)
+system(sprintf('c3d %s -popas DZ %s -popas DY %s -popas DX -push DX -scale -1 -push DY -scale -1 -push DZ -omc %s',...
+    disp_z_nii,disp_y_nii,disp_x_nii, ...
+     out_unfold2native_itk_nii));
+    
+    
 
 
 end

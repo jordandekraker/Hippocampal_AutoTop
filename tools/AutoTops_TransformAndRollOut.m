@@ -42,10 +42,14 @@ coords_SurfMap(outdir);
 create_warps(outdir,outdir); %args are in_dir, out_dir
 
 % Note: these giftis are in the template space (ie are not specifically associated with this subject, 
-% but just generated here for convenience) - 
-%  also, if you use custom n_steps_unfold or affine_unfold for create_warps, 
-%  then you must use the same parameters for create_template_unfold_gifti)
+% but just generated here for convenience)
 create_template_unfold_gifti(outdir); 
+
+%this extrapolates the (surf) unfold2native warp to nearest native coord, 
+% to effectively collapse any vertices outside the hippocampus in the
+% unfolded space to the nearest vertex.. 
+extrapolate_warp_unfold2native(outdir,outdir);
+
 
 % plot for Quality Assurance
 %plot_manualQA(outdir);

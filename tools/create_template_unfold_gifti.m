@@ -1,11 +1,14 @@
-function create_template_unfold_gifti(out_folder, ...
-    n_steps_unfold, phys_scaling_mm, unfold_origin_mm)
+function create_template_unfold_gifti(out_folder)
 arguments
     out_folder string
-    n_steps_unfold  (1,3) double = [256, 128, 16]
-    phys_scaling_mm  (1,3) double = [40,20,2.5]
-    unfold_origin_mm (1,3) double = [0,200,0] %needs to be outside of brain to
 end
+
+n_steps_unfold = [256 128 16];
+
+%get path to reference nifti relative to this script (../misc)
+[path,name,ext] = fileparts(mfilename('fullpath'));
+unfold_ref_nii = [path '/../misc/unfold_ref_256x128x16.nii.gz'];
+
 
 % This function will generate the following files in the
 % template unfolded space:
@@ -17,22 +20,13 @@ end
 % wb_command  -surface-apply-warpfield  midthickness_254x126.unfolded.surf.gii Warp_unfold2native.nii midthickness_254x126.native.surf.gii 
 
 
-unfold_coord_nii = sprintf('%s/unfold_ref.nii',out_folder);
-
-vox_size = 1.0./(n_steps_unfold -1);
 
 
-scaled_vox_size = phys_scaling_mm./n_steps_unfold;
-
-%create unfold phys coordinates file using c3d:
-%  orientation: ALI is A-P,  L-R,  I-S;
-%    chosen to correspond with hippocampal coords: A-P, P-D, I-O
-system(sprintf('c3d -create %dx%dx%d %fx%fx%fmm -origin %fx%fx%fmm -orient ALI -coordinate-map-voxel -spacing %fx%fx%fmm -popas ZI -popas YI -popas XI -push XI -scale %f -push YI -scale %f -push ZI -scale %f -omc %s',n_steps_unfold, vox_size,unfold_origin_mm,scaled_vox_size,vox_size,unfold_coord_nii));
-
-
-
-unfold_info = niftiinfo(unfold_coord_nii);
+unfold_info = niftiinfo(unfold_ref_nii);
+unfold_info.ImageSize = [unfold_info.ImageSize,3];
+unfold_info.PixelDimensions = [unfold_info.PixelDimensions,1];
 affine_unfold = unfold_info.Transform.T';
+
 
 
 
@@ -119,7 +113,10 @@ for surf_i = 1:length(surf_names)
     g.vertices = single(unfold_midsurf_phys_vec);
     
     gii_unfold = sprintf('%s/%s.unfolded.surf.gii',out_folder,surf_name);
+    vtk_unfold = sprintf('%s/%s.unfolded.surf.vtk',out_folder,surf_name);
+
     save(g,gii_unfold,'Base64Binary');
+    saveas(g,vtk_unfold);
     
 end 
     
