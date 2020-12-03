@@ -19,13 +19,19 @@ if ~exist('modality','var')
 end
 
 
+%make sure outdir is suffixed with /  (as some filepaths assume it)
+if outdir(end) ~= '/'
+    outdir=[outdir '/'];
+end
+
+
 %% Unfolding pipeline
 
 if ~exist('manual_lbl','var') || isempty(manual_lbl)
     run_NiftyNet(inimg,outdir,modality); % automatically segment
-    system(['cp ' manual_lbl ' ' outdir '/manual_lbl.nii.gz']);
     inlbl = [outdir '/niftynet_lbl.nii.gz'];
 else
+    system(['cp ' manual_lbl ' ' outdir '/manual_lbl.nii.gz']);
     inlbl = manual_lbl;
 end
 
