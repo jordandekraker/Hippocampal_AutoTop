@@ -12,7 +12,7 @@ n_steps_unfold = [256 128 16];
 
 %get path to reference nifti relative to this script (../misc)
 [path,name,ext] = fileparts(mfilename('fullpath'));
-unfold_ref_nii = [path '/../misc/unfold_ref_256x128x16.nii.gz'];
+unfold_ref_nii = [path '/../../misc/unfold_ref_256x128x16.nii.gz'];
 
 in_coord_ap_nii=sprintf('%s/coords-AP.nii.gz',in_folder);
 in_coord_pd_nii=sprintf('%s/coords-PD.nii.gz',in_folder);
