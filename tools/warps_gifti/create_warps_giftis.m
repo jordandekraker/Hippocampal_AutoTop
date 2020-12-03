@@ -18,6 +18,8 @@ end
     create_template_unfold_gifti(warps_folder); 
 
 
+    extrapolate_warp_unfold2native(warps_folder);
+
     %this performs ants registration from the unfolded coords-AP to a full grid
     %coords-AP. This is done with smoothed inner and outer labels to ensure the
     %midthickness as accurately mapped
