@@ -1,8 +1,8 @@
-function extrapolate_warp_unfold2native(in_folder, out_folder)
+function extrapolate_warp_unfold2native(warps_folder)
 
 % second-pass extrapolation:
-in_warp_unfold2native = sprintf('%s/Warp_unfold2native.nii',in_folder);
-out_warp_unfold2native = sprintf('%s/Warp_unfold2native_extrapolateNearest.nii',out_folder);
+in_warp_unfold2native = sprintf('%s/Warp_unfold2native.nii',warps_folder);
+out_warp_unfold2native = sprintf('%s/Warp_unfold2native_extrapolateNearest.nii',warps_folder);
 
 
 init_warp = niftiread(in_warp_unfold2native);

@@ -38,26 +38,8 @@ labelmap_LaplaceCoords(outdir);
 % extract hippocampal midsurface and features
 coords_SurfMap(outdir);
 
-%generate warps, and template unfolded surfaces
-create_warps(outdir,outdir); %args are in_dir, out_dir
-
-% Note: these giftis are in the template space (ie are not specifically associated with this subject, 
-% but just generated here for convenience)
-create_template_unfold_gifti(outdir); 
-
-%this extrapolates the (surf) unfold2native warp to nearest native coord, 
-% to effectively collapse any vertices outside the hippocampus in the
-% unfolded space to the nearest vertex.. 
-extrapolate_warp_unfold2native(outdir,outdir);
-
-%this performs ants registration from the unfolded coords-AP to a full grid
-%coords-AP. This is done with smoothed inner and outer labels to ensure the
-%midthickness as accurately mapped
-system(sprintf('%s/tools/warps_gifti/mapUnfoldToFullGrid.sh %s %s', ... 
-                getenv('AUTOTOP_DIR'), ...
-                outdir, ...
-                outdir));
-
+%create warps and giftis
+create_warps_giftis(outdir,outdir);
 
 % plot for Quality Assurance
 %plot_manualQA(outdir);

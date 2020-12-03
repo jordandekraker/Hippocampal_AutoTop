@@ -1,30 +1,27 @@
-function create_warps(in_folder, out_folder)
+function create_warps(autotop_folder, warps_folder)
 arguments
-    in_folder string
-    out_folder string
-end
-
-if ( ~exist(out_folder))
-    mkdir(out_folder)
+    autotop_folder string
+    warps_folder string
 end
 
 n_steps_unfold = [256 128 16];
 
-%get path to reference nifti relative to this script (../misc)
+%get path to reference nifti relative to this script 
 [path,name,ext] = fileparts(mfilename('fullpath'));
-unfold_ref_nii = [path '/../../misc/unfold_ref_256x128x16.nii.gz'];
+unfold_ref_nii = [path '/unfold_ref_256x128x16.nii.gz'];
 
-in_coord_ap_nii=sprintf('%s/coords-AP.nii.gz',in_folder);
-in_coord_pd_nii=sprintf('%s/coords-PD.nii.gz',in_folder);
-in_coord_io_nii=sprintf('%s/coords-IO.nii.gz',in_folder);
-out_native2unfold_nii=sprintf('%s/Warp_native2unfold.nii',out_folder);
+in_coord_ap_nii=sprintf('%s/coords-AP.nii.gz',autotop_folder);
+in_coord_pd_nii=sprintf('%s/coords-PD.nii.gz',autotop_folder);
+in_coord_io_nii=sprintf('%s/coords-IO.nii.gz',autotop_folder);
+
+out_native2unfold_nii=sprintf('%s/Warp_native2unfold.nii',warps_folder);
 %ITK unfold2native is the same warp as world native2unfold
-out_unfold2native_itk_nii=sprintf('%s/WarpITK_unfold2native.nii',out_folder);
-out_unfold2native_nii=sprintf('%s/Warp_unfold2native.nii',out_folder);
-out_native2unfold_itk_nii=sprintf('%s/WarpITK_native2unfold.nii',out_folder);
-out_absolute_unfold2native_nii=sprintf('%s/abswarp_unfold2native.nii',out_folder);
-out_unfold_phys_coords_nii=sprintf('%s/unfold_phys_coords.nii',out_folder);
-out_native_phys_coords_nii=sprintf('%s/native_phys_coords.nii',out_folder);
+out_unfold2native_itk_nii=sprintf('%s/WarpITK_unfold2native.nii',warps_folder);
+out_unfold2native_nii=sprintf('%s/Warp_unfold2native.nii',warps_folder);
+out_native2unfold_itk_nii=sprintf('%s/WarpITK_native2unfold.nii',warps_folder);
+out_absolute_unfold2native_nii=sprintf('%s/abswarp_unfold2native.nii',warps_folder);
+out_unfold_phys_coords_nii=sprintf('%s/unfold_phys_coords.nii',warps_folder);
+out_native_phys_coords_nii=sprintf('%s/native_phys_coords.nii',warps_folder);
 
 
 
