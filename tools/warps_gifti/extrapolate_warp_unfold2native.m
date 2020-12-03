@@ -2,50 +2,29 @@ function extrapolate_warp_unfold2native(in_folder, out_folder)
 
 % second-pass extrapolation:
 in_warp_unfold2native = sprintf('%s/Warp_unfold2native.nii',in_folder);
-in_itkwarp_native2unfold = sprintf('%s/WarpITK_native2unfold.nii',in_folder);
 out_warp_unfold2native = sprintf('%s/Warp_unfold2native_extrapolateNearest.nii',out_folder);
-in_labelmap_native = sprintf('%s/labelmap-postProcess.nii.gz',in_folder);
-out_labelmap_unfold = sprintf('%s/labelmap-postProcess_unfold.nii',out_folder);
+
 
 init_warp = niftiread(in_warp_unfold2native);
 init_warp_info = niftiinfo(in_warp_unfold2native);
 
-%problem with scattered interpolant is it uses convex hull to define
-%the space where interpolation occurs.. 
 
-% we want to use only voxels where GM exists to define the warp
-%can get these voxels by warping labelmap from native to unfolded
+nan_mask = isnan(squeeze(sum(init_warp,5)));
 
 
-%this will try antsApplyTransforms first, if it doesn't work will run
-%wb_command.. they should both produce same result, but this is just for
-%convenience since antsApplyTransforms doesn't work within matlab on cbs
-%server, while on graham wb_command isn't currently in the container.. :(
-if ~(system(sprintf('antsApplyTransforms -i %s -r %s -t %s -n NearestNeighbor -o %s', ...
-     in_labelmap_native, in_itkwarp_native2unfold, in_itkwarp_native2unfold, out_labelmap_unfold)))
-    system(sprintf('wb_command -volume-warpfield-resample %s %s %s   ENCLOSING_VOXEL  %s', ...
-    in_labelmap_native, in_warp_unfold2native, in_warp_unfold2native, out_labelmap_unfold));
-end
+bad_inds = find(nan_mask==1);
+good_inds = find(nan_mask==0);
 
 
-
-labelmap_unfold = niftiread(out_labelmap_unfold);
-
-
-gm_mask = labelmap_unfold==1;
-gm_inds = find(gm_mask==1);
-non_gm_inds = find(gm_mask==0);
-
-
-%points inside GM
-[px,py,pz]=ind2sub(size(init_warp,1,2,3),gm_inds);
+%points inside 
+[px,py,pz]=ind2sub(size(init_warp,1,2,3),good_inds);
 gm_points = [px,py,pz];
 
-%points outside
-[qx,qy,qz]=ind2sub(size(init_warp,1,2,3),non_gm_inds);
+%points outside to extrapolate
+[qx,qy,qz]=ind2sub(size(init_warp,1,2,3),bad_inds);
 query_points = [qx,qy,qz];
 
-%get nearest gm coord from each non-gm coord:
+%get nearest good coord from each bad coord:
 nearest_inds = dsearchn(gm_points,query_points);
 
 
@@ -106,8 +85,8 @@ for d = 1:3
     new_warp_abs_d = squeeze(new_warp_abs(:,:,:,d));
     init_warp_abs_d = squeeze(init_warp_abs(:,:,:,d));
     
-    new_warp_abs_d(gm_inds) = init_warp_abs_d(gm_mask==1);
-    new_warp_abs_d(non_gm_inds) = init_warp_abs_d(gm_inds(nearest_inds));
+    new_warp_abs_d(good_inds) = init_warp_abs_d(nan_mask==0);
+    new_warp_abs_d(bad_inds) = init_warp_abs_d(good_inds(nearest_inds));
     
     new_warp_abs(:,:,:,d) = new_warp_abs_d;
 end
