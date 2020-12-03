@@ -29,6 +29,7 @@ subplot(1,2,1);
 p = patch('Faces',FV.faces,'Vertices',FV.vertices,'FaceVertexCData',img(:));
 p.FaceColor = 'flat';
 p.LineStyle = 'none';
+material dull;
 axis equal tight;
 % colormap('jet');
 light;

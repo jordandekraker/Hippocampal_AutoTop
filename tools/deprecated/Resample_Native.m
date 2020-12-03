@@ -33,7 +33,7 @@ for f = 1:length(imgList)
     img(end) = [];
     
     if LR == 'L'
-        unflip_dir = [hippDir '/../hemi-Lnoflip']
+        unflip_dir = [hippDir '/../hemi-Lnoflip'];
         i = load_untouch_nii(img);
         i.img = flip(i.img,1); % flip (only if right)
         mkdir(unflip_dir); % just to ensure this exists
@@ -92,8 +92,8 @@ combinedmat = import_txtAffine(combined);
 % invert transforms
 combinedmat = itransf.*combinedmat;
 % apply transforms
-v = combinedmat*v;
-Vnative = v';
+Vnative = combinedmat*v;
+Vnative = Vnative';
 
 % Write file
 out = [outdir '/midSurf_hemi-' LR '.vtk'];

@@ -161,14 +161,16 @@ for io = 1:IOres
     end
     v = v';
     
+    Vall(:,:,io) = v;
+    
     vtkwrite([outprefix 'midSurf_depth-' num2str(io) '.vtk'],...
         'polydata','triangle',v(:,1),v(:,2),v(:,3),F);
 end
 
 %% clean up and save
 
-clearvars x y z u v w t i_L j_L k_L  i ii extrap interp
-clearvars -except outprefix APres PDres IOres Vxyz Vuvw Vmid Vinner Vouter Vrec F...
+clearvars x y z u w t i_L j_L k_L  i ii extrap interp
+clearvars -except outprefix APres PDres IOres Vxyz Vuvw Vmid Vrec Vall F...
     idxgm img lbl sz GI streamlengths qMap
 save([outprefix 'surf.mat']);
 end

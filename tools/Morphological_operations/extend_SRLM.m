@@ -21,4 +21,4 @@ Xrlm = zeros(size(lbl2));
 Xrlm(CC.PixelIdxList{li(2)}) = 1; % second largest connected contour area
 Xrlm = imdilate(Xrlm,ones(5,5,5));
 Xrlm = imresize3(Xrlm,size(labelmap),'nearest');
-labelmap(Xrlm==1 & labelmap==0) = 44;
+labelmap(Xrlm==1 & labelmap==0) = 4;
