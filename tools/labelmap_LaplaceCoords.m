@@ -18,7 +18,7 @@ try
     initAP = load_untouch_nii([tmpdir '/coords-AP.nii.gz']);
     initPD = load_untouch_nii([tmpdir '/coords-PD.nii.gz']);
     initIO = load_untouch_nii([tmpdir '/coords-IO.nii.gz']);
-    fineTune = false;
+    fineTune = true;
 catch
     warning('No Laplace coords initialization found, solving de novo');
     fineTune = true;
