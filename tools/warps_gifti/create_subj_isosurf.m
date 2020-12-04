@@ -76,15 +76,17 @@ g.mat = eye(4,4);
 g.faces = int32(faces);
 g.vertices = single(vertices);
 save(g,sprintf('%s%s.iso.surf.gii',out_prefix,surf_name),'Base64Binary');
-
+saveas(g,sprintf('%s%s.iso.surf.vtk',out_prefix,surf_name));
 g_pruned = g;
 g_pruned.faces = int32(faces_pruned);
 g_pruned.vertices = single(vertices_pruned);
 save(g_pruned,sprintf('%s%s.isopruned.surf.gii',out_prefix,surf_name),'Base64Binary');
+saveas(g_pruned,sprintf('%s%s.isopruned.surf.vtk',out_prefix,surf_name));
 
 g_smooth = g_pruned;
 g_smooth.vertices = single(vertices_smoothed);
 save(g_smooth,sprintf('%s%s.isosmoothed.surf.gii',out_prefix,surf_name),'Base64Binary');
+saveas(g_smooth,sprintf('%s%s.isosmoothed.surf.vtk',out_prefix,surf_name));
 
 %plot them
 figure;
