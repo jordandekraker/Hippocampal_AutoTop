@@ -91,7 +91,7 @@ system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
     '-t ' initAff]);
 
 % get header to use for all outputs
-origheader = labelmap;
+origheader = load_untouch_nii([outprefix '/img.nii.gz']);
 origheader.img = zeros(size(origheader.img));
 i = load_untouch_nii([tmpdir '/UPenn_warped_lbl.nii.gz']);
 if labelmap.hdr.dime.pixdim(1) == -1 % flip back if unintended flip
