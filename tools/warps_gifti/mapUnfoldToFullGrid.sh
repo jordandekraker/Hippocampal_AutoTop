@@ -120,6 +120,11 @@ wb_command -convert-warpfield -from-itk ${warps_dir}/WarpITK_${warp_name}_0Warp.
 echo wb_command -convert-warpfield -from-itk ${warps_dir}/WarpITK_${warp_name}_0InverseWarp.nii.gz -to-world ${warps_dir}/Warp_unfold2unfoldtemplate.nii
 wb_command -convert-warpfield -from-itk ${warps_dir}/WarpITK_${warp_name}_0InverseWarp.nii.gz -to-world ${warps_dir}/Warp_unfold2unfoldtemplate.nii
 
+#do this part in hippunfold instead:
+if false
+then
+
+
 for surf in midthickness inner outer
 do
 #transform surfaces
@@ -127,9 +132,11 @@ echo wb_command -surface-apply-warpfield ${warps_dir}/$surf.unfoldedtemplate.sur
 wb_command -surface-apply-warpfield ${warps_dir}/$surf.unfoldedtemplate.surf.gii ${warps_dir}/Warp_unfoldtemplate2unfold.nii ${warps_dir}/$surf.unfolded.surf.gii
 echo wb_command -surface-apply-warpfield ${warps_dir}/$surf.unfolded.surf.gii ${warps_dir}/Warp_unfold2native_extrapolateNearest.nii ${warps_dir}/$surf.native.surf.gii 
 wb_command -surface-apply-warpfield ${warps_dir}/$surf.unfolded.surf.gii ${warps_dir}/Warp_unfold2native_extrapolateNearest.nii ${warps_dir}/$surf.native.surf.gii 
-mris_convert ${surf}.native.surf.gii ${surf}.native.surf.vtk; mv rh.${surf}.native.surf.vtk ${surf}.native.surf.vtk
+#mris_convert ${surf}.native.surf.gii ${surf}.native.surf.vtk; mv rh.${surf}.native.surf.vtk ${surf}.native.surf.vtk
 
 done
+
+fi
 
 #transform image to evaluate reg
 for C in AP PD IO
@@ -138,3 +145,5 @@ do
     antsApplyTransforms -d 3 -f -1 -r ${warps_dir}/coords-${C}_unfold.nii -i ${warps_dir}/coords-${C}_unfold.nii -n NearestNeighbor -t ${warps_dir}/WarpITK_${warp_name}_0Warp.nii.gz -o ${warps_dir}/coords-${C}_unfoldtemplate.nii
 
 done
+
+
