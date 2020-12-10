@@ -24,11 +24,12 @@ end
     %coords-AP. This is done with smoothed inner and outer labels to ensure the
     %midthickness as accurately mapped
 
+    %this is run separately in hippunfold now (since issues with wb_command inside matlab when using singularity)
     %get path to script:
-    [path,name,ext] = fileparts(mfilename('fullpath'));
-    system(sprintf('%s/mapUnfoldToFullGrid.sh %s %s', ... 
-                path, ...
-                autotop_folder,warps_folder));
+%    [path,name,ext] = fileparts(mfilename('fullpath'));
+%    system(sprintf('%s/mapUnfoldToFullGrid.sh %s %s', ... 
+%                path, ...
+%                autotop_folder,warps_folder));
 
 
 end
