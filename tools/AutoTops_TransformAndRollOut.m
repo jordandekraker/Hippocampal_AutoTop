@@ -24,6 +24,12 @@ if outdir(end) ~= '/'
     outdir=[outdir '/'];
 end
 
+% make local copy of inimg (later steps depend on this)
+mkdir(outdir);
+system(['cp ' inimg ' ' outdir 'img.nii.gz']);
+inimg = [outdir 'img.nii.gz'];
+
+
 
 %% Unfolding pipeline
 
