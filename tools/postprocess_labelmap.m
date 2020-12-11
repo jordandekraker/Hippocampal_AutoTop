@@ -91,7 +91,12 @@ system(['antsApplyTransforms -d 3 --interpolation NearestNeighbor '...
     '-t ' initAff]);
 
 % get header to use for all outputs
-origheader = load_untouch_nii([outprefix '/img.nii.gz']);
+origheader = labelmap;
+% int (for labelmaps) to double (for decimals)
+origheader.hdr.dime.datatype = 64;
+origheader.hdr.dime.bitpix = 64;
+origheader.hdr.dime.glmax = 1;
+
 origheader.img = zeros(size(origheader.img));
 i = load_untouch_nii([tmpdir '/UPenn_warped_lbl.nii.gz']);
 if labelmap.hdr.dime.pixdim(1) == -1 % flip back if unintended flip
