@@ -24,6 +24,12 @@ if outdir(end) ~= '/'
     outdir=[outdir '/'];
 end
 
+% make local copy of inimg (later steps depend on this)
+mkdir(outdir);
+system(['cp ' inimg ' ' outdir 'img.nii.gz']);
+inimg = [outdir 'img.nii.gz'];
+
+
 
 %% Unfolding pipeline
 
@@ -39,9 +45,10 @@ end
 postprocess_labelmap(inlbl,outdir);
 
 % apply/refine Laplacian coordinate framework
-labelmap_LaplaceCoords(outdir);
+inlbl = [outdir 'labelmap-postProcess.nii.gz'];
+labelmap_LaplaceCoords(inlbl,outdir);
 
-% extract hippocampal midsurface and features
+% extract hippocampal midsurface and features - to be deprecated by gifti surfs
 coords_SurfMap(outdir);
 
 %create warps and giftis
