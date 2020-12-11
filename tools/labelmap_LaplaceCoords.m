@@ -1,10 +1,9 @@
-function out = labelmap_LaplaceCoords(outprefix)
+function out = labelmap_LaplaceCoords(inlbl,outprefix)
 % Solves laplace equation over the A-P, P-D and I-O dimensions of the
 % hippocmapus (analogous to 'register_UnfoldingAtlas' but form the
 % bottom-up rather than from an atlas). IF 'initCoords' exists, this will
 % smooth that solution instead of solving de novo.
 
-inlbl = [outprefix '/labelmap-postProcess.nii.gz'];
 iters = 4; %TODO: test this for robustness with imperfect segmenations. 
 % Too few and the result is not smooth, too many and the UPenn prior is 
 % not strong enough (more suscpetible to topological holes).
