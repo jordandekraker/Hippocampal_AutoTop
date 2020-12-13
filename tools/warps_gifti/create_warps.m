@@ -6,9 +6,8 @@ end
 
 n_steps_unfold = [256 128 16];
 
-%get path to reference nifti relative to this script 
-[path,name,ext] = fileparts(mfilename('fullpath'));
-unfold_ref_nii = [path '/unfold_ref_256x128x16.nii.gz'];
+%get path to reference nifti relative AUTOTOP_DIR
+unfold_ref_nii = [getenv('AUTOTOP_DIR') '/misc/unfold_ref_256x128x16.nii.gz'];
 
 in_coord_ap_nii=sprintf('%s/coords-AP.nii.gz',autotop_folder);
 in_coord_pd_nii=sprintf('%s/coords-PD.nii.gz',autotop_folder);
