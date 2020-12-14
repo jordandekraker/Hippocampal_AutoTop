@@ -6,8 +6,7 @@ end
 n_steps_unfold = [256 128 16];
 
 %get path to reference nifti relative to this script 
-[path,name,ext] = fileparts(mfilename('fullpath'));
-unfold_ref_nii = [path '/unfold_ref_256x128x16.nii.gz'];
+unfold_ref_nii = [getenv('AUTOTOP_DIR') '/misc/unfold_ref_256x128x16.nii.gz'];
 
 
 
