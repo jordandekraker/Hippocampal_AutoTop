@@ -10,7 +10,7 @@ This repo supports end-end processing of data that is registered to MNI152, runs
 
 The preferred method to run the code is through Docker or Singularity, using the container provided. 
 
-`singularity pull docker://jordandekraker/hippocampal_autotop:latest hippocampal_autotop_latest.sif`
+`singularity pull hippocampal_autotop_latest.sif docker://jordandekraker/hippocampal_autotop:latest`
 
 ### Usage
 `singularity run --nv hippocampal_autotop_latest.sif <input image> <output directory> <(optional) modality [HCP1200-T2, HCP1200-T1, or HCP1200-b1000]> <(optional) manual segmentation image>`
