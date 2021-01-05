@@ -35,22 +35,27 @@ if strcmp(space,'MNI152') || strcmp(space,'agile12')
 else
     %aff1 = [outdir '/0GenericAffine.mat'];
     aff1 = [outdir '/itk_affine.mat'];
+    aff2 = [getenv('AUTOTOP_DIR') '/atlases/' atlas '/CoronalOblique_rigid.txt'];
     if ~exist(aff1,'file') && ~exist([outdir '/sub2atlas.mat'],'file')
         %system(['bash tools/ANTsTools/runAntsImgs_Aff.sh ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/orig_T2w.nii.gz ' inimg ' ' outdir]);
         s1 = system(['flirt -ref ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/orig_T2w.nii.gz -in ' inimg ' -omat ' outdir '/flirt_affine.mat']);
         if s1 ~= 0 
-            error('FLIRT registration to atlas failed');
+            warning('FLIRT registration to atlas failed. Trying again with CorObl atlas.');
+            s2 = system(['flirt -ref ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/orig_T2w_CoronalOblique.nii.gz -in ' inimg ' -omat ' outdir '/flirt_affine.mat']);
+            aff2 = [getenv('AUTOTOP_DIR') '/misc/identity_affine.txt'];
+            if s2 ~= 0
+                error('FLIRT registration to atlas failed.');
+            end
         end
-        s2 = system(['c3d_affine_tool ' outdir '/flirt_affine.mat '...
+        s3 = system(['c3d_affine_tool ' outdir '/flirt_affine.mat '...
             '-src  ' inimg ' '...
             '-ref  ' getenv('AUTOTOP_DIR') '/atlases/' atlas '/orig_T2w.nii.gz '...
             '-fsl2ras -oitk ' outdir 'itk_affine.mat']);
-        if s2 ~= 0 
+        if s3 ~= 0 
             error('c3d_affine_tool failed');
         end
     end
 end
-aff2 = [getenv('AUTOTOP_DIR') '/atlases/' atlas '/CoronalOblique_rigid.txt'];
 
 %% keep a copy of each affine
 
