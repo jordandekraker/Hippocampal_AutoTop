@@ -36,7 +36,7 @@ end
 % dilate dark band (or cyst) over distal parts of geodist_PD to get only
 % approximate granule cell layer
 se = ones(3,3,3);
-SRLMorCyst = ismember(labelmap,2);
+SRLMorCyst = ismember(labelmap,[2 7]);
 sink_main = (imdilate(SRLMorCyst,se) & Geodist_PD>=0.9); %last ~10% of geodist is DG
 
 

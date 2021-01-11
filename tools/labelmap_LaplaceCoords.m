@@ -27,6 +27,7 @@ end
 
 origheader = load_untouch_nii(inlbl);
 labelmap = double(origheader.img);
+labelmap = replace_islands(labelmap); % clean up labelmap a bit
 origheader.img = [];
 origheader.hdr.dime.datatype = 16; % ensure this is not rounded during later saving
 

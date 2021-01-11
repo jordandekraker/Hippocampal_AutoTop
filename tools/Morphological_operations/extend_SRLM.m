@@ -18,9 +18,13 @@ end
 [le,li] = sort(le,'descend');
 
 Xrlm = zeros(size(lbl2));
-for i = 2:length(CC.PixelIdxList)
-Xrlm(CC.PixelIdxList{li(i)}) = 1; % second largest connected contour area
+if length(CC.PixelIdxList) > 1
+    for i = 2:length(CC.PixelIdxList)
+        Xrlm(CC.PixelIdxList{li(i)}) = 1; % second largest connected contour area
+    end
 end
 Xrlm = imdilate(Xrlm,ones(5,5,5));
 Xrlm = imresize3(Xrlm,size(labelmap),'nearest');
 labelmap(Xrlm==1 & labelmap==0) = 4;
+
+clear le li CC lbl2 se contour1 Xrlm i
