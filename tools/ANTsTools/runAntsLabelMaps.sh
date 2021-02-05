@@ -21,15 +21,12 @@ then
 
  shift 3
 
-convergence_aff="[100x50,1e-6,10]"
-shrink_factors_aff="4x2"
-smoothing_sigmas_aff="4x2vox"
-convergence="[50x100x200,1e-7,10]"
+convergence="[500x500x250,1e-6,50]"
 shrink_factors="4x2x1"
-smoothing_sigmas="2x1x0.25vox" # cannot exceed 8vox (hard-coded limit in ANTS)
+smoothing_sigmas="8x4x2vox" # cannot exceed 8vox (hard-coded limit in ANTS)
 radiusnbins=3
-stepsize=0.25 
-updatefield=15 # fluid deformation. 10 is quite high fluidity
+stepsize=0.1 
+updatefield=5 # fluid deformation (default 3)
 totalfield=0 # elastic deformation
 labellist=1
 weightlist=1
